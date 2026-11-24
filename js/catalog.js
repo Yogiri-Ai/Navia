@@ -11,7 +11,7 @@ export const ALL_PHOTOS = [
   { file: "1335748.jpeg", title: "Sunflowers & Radiant Curls", cat: "wallpaper", wide: true },
   { file: "1344732.jpeg", title: "Afternoon Confectionery at Poisson", cat: "wallpaper", wide: true },
   { file: "1360834.jpeg", title: "Lavender Breeze & Petals", cat: "wallpaper", wide: true },
-  { file: "%E1%AF%93%E2%98%85%20Navia%20Tcg%20Card%20%E2%82%8A%CB%9A%E2%8A%B9%20%E1%B0%94.jpg", title: "Genius Invokation TCG Sovereign", cat: "portrait", wide: false },
+  { file: "%E1%AF%93%E2%98%85%20Navia%20Tcg%20Card%20%E2%82%8A%CB%9A%E2%8A%B9%20%E1%B0%94.jpg", title: "Genius Invokation Sovereign", cat: "portrait", wide: false },
   { file: "Navia.jpg", title: "President of Spina di Rosula", cat: "portrait", wide: false },
   { file: "Navia%20Genshin%20Impact.jpg", title: "Golden Parasol Promenade", cat: "portrait", wide: false },
   { file: "__._._._._._.%23travel__%23nofilter__website%E2%80%A6", title: "Starlight Soiree Gift", cat: "portrait", wide: false },
@@ -79,45 +79,45 @@ export const FOIL_THEMES = {
   }
 };
 
-// Pre-extracted Japanese Voice Lines (JP VA: Toyosaki Aki / 豊崎愛生)
+// Pre-extracted Japanese Voice Lines (CV: Toyosaki Aki / 豊崎愛生)
 export const JP_VOICE_LINES = [
   {
     id: 0,
     type: "skill",
     audioFile: "./audio/jp-skill-1.mp3",
     durSec: 5.7,
-    label: "Elemental Skill • Ceremonial Crystalshot I",
-    jp: "「避けられる？ … 気を付けなさい！」",
-    romaji: "Yokerareru? ... Kiwotsukenasai!",
-    en: "Can you avoid this? ... Be careful!"
+    label: "Ceremonial Crystalshot I",
+    jp: "避けられる？ 気を付けなさい！",
+    romaji: "Yokerareru? Kiwotsukenasai!",
+    en: "Can you avoid this? Be careful!"
   },
   {
     id: 1,
     type: "skill",
     audioFile: "./audio/jp-skill-2.mp3",
     durSec: 5.7,
-    label: "Elemental Skill • Ceremonial Crystalshot II",
-    jp: "「あと何発でしょー？ … 堂々不意打ち！」",
-    romaji: "Ato nanpatsu deshou? ... Doudou fuiuchi!",
-    en: "How many more bullets? ... Surprise attack!"
+    label: "Ceremonial Crystalshot II",
+    jp: "あと何発でしょー？ 堂々不意打ち！",
+    romaji: "Ato nanpatsu deshou? Doudou fuiuchi!",
+    en: "How many more bullets? Surprise attack!"
   },
   {
     id: 2,
     type: "skill",
     audioFile: "./audio/jp-skill-3.mp3",
     durSec: 5.8,
-    label: "Elemental Skill • Ceremonial Crystalshot III",
-    jp: "「これって…“傘弾銃”？ … やっほ～！」",
-    romaji: "Kore tte... \"Sandanjuu\"? ... Yahhoo~!",
-    en: "Is this... \"An Umbrella gun\"? ... Yahhoo~!"
+    label: "Ceremonial Crystalshot III",
+    jp: "これって“傘弾銃”？ やっほ～！",
+    romaji: "Kore tte \"Sandanjuu\"? Yahhoo~!",
+    en: "Is this an Umbrella gun? Yahhoo!"
   },
   {
     id: 3,
     type: "burst",
     audioFile: "./audio/jp-burst-1.mp3",
     durSec: 5.6,
-    label: "Elemental Burst • Sunlit Sky's Singing Salute I",
-    jp: "「ファイアー！ま、岩元素なんだけどね」",
+    label: "Sunlit Sky's Singing Salute I",
+    jp: "ファイアー！ ま、岩元素なんだけどね",
     romaji: "Faiaa! Ma, iwa gensou nandakedo ne",
     en: "Fire! Well, these are only rocks though."
   },
@@ -126,23 +126,21 @@ export const JP_VOICE_LINES = [
     type: "burst",
     audioFile: "./audio/jp-burst-2.mp3",
     durSec: 5.7,
-    label: "Elemental Burst • Sunlit Sky's Singing Salute II",
-    jp: "「ローズクラッカー！『棘薔薇の会』特注版よ」",
+    label: "Sunlit Sky's Singing Salute II",
+    jp: "ローズクラッカー！ 『棘薔薇の会』特注版よ",
     romaji: "Roozukurakkaa! \"Supina di Roosura\" tokuchuuban yo",
-    en: "Rosecracker! This is a special edition, \"The Thorn Rose\"!"
+    en: "Rosecracker! Special edition of the Spina di Rosula!"
   },
   {
     id: 5,
     type: "burst",
     audioFile: "./audio/jp-burst-3.mp3",
     durSec: 6.0,
-    label: "Elemental Burst • Sunlit Sky's Singing Salute III",
-    jp: "「撃ち続けて～！うんうん、イイ感じ！」",
+    label: "Sunlit Sky's Singing Salute III",
+    jp: "撃ち続けて～！ うんうん、イイ感じ！",
     romaji: "Uchitsuzukete~! Un un, ii kanji!",
-    en: "Keep shooting! Yeah, yeah, that's good!"
+    en: "Keep shooting! Yes, that feels great!"
   }
 ];
 
-export const VOICE_QUOTES = JP_VOICE_LINES.map(
-  (v) => `${v.jp} (${v.romaji}) — “${v.en}”`
-);
+export const VOICE_QUOTES = JP_VOICE_LINES.map((v) => v.en);

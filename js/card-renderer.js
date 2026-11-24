@@ -1,7 +1,8 @@
 // ==================================================
 // HIGH-DPI SOVEREIGN CARD COMPOSITOR & HD PNG EXPORTER
+// Clean Art Deco Filigree Frame (Zero Checkerboard Obstruction)
 // ==================================================
-import { FOIL_THEMES } from "./catalog.js?v=3";
+import { FOIL_THEMES } from "./catalog.js?v=4";
 
 export function createBaseCardCanvas(themeKey = "geo") {
   const c = document.createElement("canvas");
@@ -22,11 +23,11 @@ export function drawProceduralFallbackCard(c, themeKey = "geo") {
   ctx.fillRect(0, 0, c.width, c.height);
 
   ctx.strokeStyle = theme.primary;
-  ctx.lineWidth = 14;
+  ctx.lineWidth = 10;
   ctx.strokeRect(36, 36, c.width - 72, c.height - 72);
 
   ctx.fillStyle = "#fff5dc";
-  ctx.font = "400 78px Questrial, sans-serif";
+  ctx.font = "400 74px Questrial, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("N A V I A", 512, 1255);
 }
@@ -34,7 +35,7 @@ export function drawProceduralFallbackCard(c, themeKey = "geo") {
 export function paintSovereignCard(targetCanvas, img, options = {}) {
   const theme = FOIL_THEMES[options.foilTheme] || FOIL_THEMES.geo;
   const title = (options.title || "N A V I A").toUpperCase();
-  const subtitle = (options.subtitle || "SPINA DI ROSULA • SOVEREIGN").toUpperCase();
+  const subtitle = (options.subtitle || "SPINA DI ROSULA").toUpperCase();
   const badgeText = (options.badge || theme.badge).toUpperCase();
 
   const ctx = targetCanvas.getContext("2d");
@@ -42,7 +43,7 @@ export function paintSovereignCard(targetCanvas, img, options = {}) {
   const ch = targetCanvas.height;
   ctx.clearRect(0, 0, cw, ch);
 
-  // 1. Center-crop cover draw
+  // 1. Pure, unobstructed high-resolution portrait draw
   if (img && img.width > 0 && img.height > 0) {
     const imgAspect = img.width / img.height;
     const canAspect = cw / ch;
@@ -52,112 +53,86 @@ export function paintSovereignCard(targetCanvas, img, options = {}) {
       sx = (img.width - sw) * 0.5;
     } else {
       sh = img.width / canAspect;
-      sy = (img.height - sh) * 0.22;
+      sy = (img.height - sh) * 0.18;
     }
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
   } else {
     drawProceduralFallbackCard(targetCanvas, options.foilTheme);
   }
 
-  // 2. Subtle holographic diamond foil watermark overlay
-  ctx.save();
-  ctx.strokeStyle = theme.primary;
-  ctx.globalAlpha = 0.12;
-  ctx.lineWidth = 2;
-  const step = 86;
-  for (let x = -ch; x < cw + ch; x += step) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x + ch, ch);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x + ch, 0);
-    ctx.lineTo(x, ch);
-    ctx.stroke();
-  }
-  ctx.restore();
-
-  // 3. Bottom royal nameplate vignette
-  const grad = ctx.createLinearGradient(0, ch * 0.62, 0, ch);
-  grad.addColorStop(0, "rgba(14,8,4,0)");
-  grad.addColorStop(0.58, "rgba(14,8,4,0.68)");
-  grad.addColorStop(1, theme.dark);
+  // 2. Subtle bottom editorial gradient for typography legibility
+  const grad = ctx.createLinearGradient(0, ch * 0.68, 0, ch);
+  grad.addColorStop(0, "rgba(10,6,3,0)");
+  grad.addColorStop(0.55, "rgba(12,8,4,0.62)");
+  grad.addColorStop(1, "rgba(10,6,3,0.92)");
   ctx.fillStyle = grad;
-  ctx.fillRect(0, ch * 0.62, cw, ch * 0.38);
+  ctx.fillRect(0, ch * 0.68, cw, ch * 0.32);
 
-  // 4. Ornate outer & inner royal filigree frame
+  // 3. Delicate Art Deco double hairline frame around perimeter
   ctx.save();
   ctx.strokeStyle = theme.primary;
-  ctx.lineWidth = 14;
-  ctx.strokeRect(26, 26, cw - 52, ch - 52);
-  ctx.lineWidth = 4;
+  ctx.globalAlpha = 0.88;
+  ctx.lineWidth = 8;
+  ctx.strokeRect(28, 28, cw - 56, ch - 56);
+  ctx.globalAlpha = 0.45;
+  ctx.lineWidth = 2.5;
   ctx.strokeRect(46, 46, cw - 92, ch - 92);
 
-  // Corner Geo diamond accents
-  const corners = [
+  // Corner Art Deco diamond nodes
+  ctx.globalAlpha = 0.95;
+  [
     [46, 46],
     [cw - 46, 46],
     [46, ch - 46],
     [cw - 46, ch - 46]
-  ];
-  corners.forEach(([cx, cy]) => {
+  ].forEach(([cx, cy]) => {
     ctx.fillStyle = theme.primary;
     ctx.beginPath();
-    ctx.moveTo(cx, cy - 22);
-    ctx.lineTo(cx + 22, cy);
-    ctx.lineTo(cx, cy + 22);
-    ctx.lineTo(cx - 22, cy);
+    ctx.moveTo(cx, cy - 16);
+    ctx.lineTo(cx + 16, cy);
+    ctx.lineTo(cx, cy + 16);
+    ctx.lineTo(cx - 16, cy);
     ctx.closePath();
     ctx.fill();
   });
   ctx.restore();
 
-  // 5. Top-left Element / Cost Emblem Badge
+  // 4. Refined Top-Left Element Crest
   ctx.save();
-  ctx.fillStyle = "rgba(18, 12, 8, 0.85)";
+  ctx.fillStyle = "rgba(14, 10, 7, 0.78)";
   ctx.beginPath();
-  ctx.arc(124, 124, 58, 0, Math.PI * 2);
+  ctx.arc(114, 114, 48, 0, Math.PI * 2);
   ctx.fill();
-  ctx.lineWidth = 6;
+  ctx.lineWidth = 3.5;
   ctx.strokeStyle = theme.primary;
   ctx.stroke();
 
   ctx.fillStyle = theme.primary;
-  ctx.font = "600 34px Questrial, sans-serif";
+  ctx.font = "600 28px Questrial, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText(badgeText, 124, 136);
+  ctx.fillText(badgeText, 114, 124);
   ctx.restore();
 
-  // 6. Top-right 5-Star Sovereign Rarity Emblem
-  ctx.save();
-  ctx.fillStyle = theme.primary;
-  ctx.font = "400 32px Questrial, sans-serif";
-  ctx.textAlign = "right";
-  ctx.fillText("✦ ✦ ✦ ✦ ✦", cw - 74, 118);
-  ctx.font = "500 20px Urbanist, sans-serif";
-  ctx.fillStyle = "rgba(255, 245, 220, 0.82)";
-  ctx.fillText("FONTAINE • SPINA DI ROSULA", cw - 74, 148);
-  ctx.restore();
-
-  // 7. Bottom Royal Nameplate Typography
+  // 5. Bottom Editorial Typography
   ctx.save();
   ctx.textAlign = "center";
 
-  // Decorative divider line above name
   ctx.strokeStyle = theme.primary;
-  ctx.lineWidth = 2.5;
+  ctx.globalAlpha = 0.55;
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(cw * 0.22, ch - 210);
-  ctx.lineTo(cw * 0.78, ch - 210);
+  ctx.moveTo(cw * 0.28, ch - 196);
+  ctx.lineTo(cw * 0.72, ch - 196);
   ctx.stroke();
 
-  ctx.fillStyle = "#fff8e8";
-  ctx.font = "400 72px Questrial, sans-serif";
-  ctx.fillText(title, cw / 2, ch - 126);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#fffaf0";
+  ctx.font = "400 68px 'Cormorant Garamond', Questrial, serif";
+  ctx.fillText(title, cw / 2, ch - 120);
 
   ctx.fillStyle = theme.primary;
-  ctx.font = "600 27px Urbanist, sans-serif";
-  ctx.fillText(subtitle, cw / 2, ch - 76);
+  ctx.font = "500 23px Urbanist, sans-serif";
+  ctx.fillText(subtitle, cw / 2, ch - 72);
   ctx.restore();
 }
 

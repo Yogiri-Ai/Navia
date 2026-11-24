@@ -1,13 +1,13 @@
 // ==================================================
 // THREE.JS r160 3-MODE INTERACTIVE 3D NAVIA STAGE
-// With Volumetric Unreal Bloom Auras, GLSL Godray Corona,
-// and 3D Crystal Salute Shockwave + 11-Pellet Rosula Barrage
+// Crystal-Clear Silk Sheen Card Shader, Hollow Astrolabe Halo
+// (Always Behind Card), Volumetric Bloom & Salute Shockwave
 // ==================================================
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=3";
-import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=3";
+import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=4";
+import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=4";
 
 export function initThreeStage(callbacks = {}) {
   const canvas = document.getElementById("fox");
@@ -19,7 +19,7 @@ export function initThreeStage(callbacks = {}) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 1.08;
 
   const scene = new THREE.Scene();
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -37,15 +37,15 @@ export function initThreeStage(callbacks = {}) {
   const hemiLight = new THREE.HemisphereLight(0xffe2c0, 0x6b3a12, 1.15);
   scene.add(hemiLight);
 
-  const keyLight = new THREE.DirectionalLight(0xffc98a, 2.3);
+  const keyLight = new THREE.DirectionalLight(0xffc98a, 2.25);
   keyLight.position.set(-3, 4, 3);
   scene.add(keyLight);
 
-  const rimLight = new THREE.DirectionalLight(0xffa24d, 1.75);
+  const rimLight = new THREE.DirectionalLight(0xffa24d, 1.7);
   rimLight.position.set(3, 2, -3);
   scene.add(rimLight);
 
-  const sapphireLight = new THREE.PointLight(0x4ea8ff, 2.1, 9);
+  const sapphireLight = new THREE.PointLight(0x4ea8ff, 2.0, 9);
   sapphireLight.position.set(1.6, -1.1, 2.2);
   scene.add(sapphireLight);
 
@@ -53,7 +53,6 @@ export function initThreeStage(callbacks = {}) {
   saluteFlashLight.position.set(0, 0.2, 1.8);
   scene.add(saluteFlashLight);
 
-  // Keep GLTFLoader referenced per spec
   const gltfLoader = new GLTFLoader();
   void gltfLoader;
 
@@ -86,21 +85,21 @@ export function initThreeStage(callbacks = {}) {
 
   const goldBloomTex = createBloomTexture(
     "rgba(255, 250, 220, 1.0)",
-    "rgba(255, 196, 75, 0.65)",
-    "rgba(232, 116, 42, 0.18)"
+    "rgba(255, 196, 75, 0.62)",
+    "rgba(232, 116, 42, 0.16)"
   );
 
   const sapphireBloomTex = createBloomTexture(
     "rgba(225, 242, 255, 1.0)",
-    "rgba(78, 168, 255, 0.65)",
-    "rgba(37, 99, 235, 0.18)"
+    "rgba(78, 168, 255, 0.62)",
+    "rgba(37, 99, 235, 0.16)"
   );
 
   function createBloomSprite(isSapphire, scaleVal) {
     const mat = new THREE.SpriteMaterial({
       map: isSapphire ? sapphireBloomTex : goldBloomTex,
       transparent: true,
-      opacity: 0.78,
+      opacity: 0.75,
       depthWrite: false,
       blending: THREE.AdditiveBlending
     });
@@ -109,18 +108,18 @@ export function initThreeStage(callbacks = {}) {
     return sp;
   }
 
-  // Shared PBR Materials with Bloom Emissive Boost
+  // Shared PBR Materials
   const goldMat = new THREE.MeshStandardMaterial({
     color: 0xf7c654,
     emissive: 0x5c3606,
-    emissiveIntensity: 0.25,
+    emissiveIntensity: 0.22,
     metalness: 0.92,
     roughness: 0.15,
     envMapIntensity: 1.35
   });
 
   const obsidianMat = new THREE.MeshStandardMaterial({
-    color: 0x1a1310,
+    color: 0x18120e,
     metalness: 0.65,
     roughness: 0.24,
     envMapIntensity: 0.85
@@ -129,7 +128,7 @@ export function initThreeStage(callbacks = {}) {
   const sapphireMat = new THREE.MeshPhysicalMaterial({
     color: 0x3b8aff,
     emissive: 0x1648b8,
-    emissiveIntensity: 0.75,
+    emissiveIntensity: 0.72,
     metalness: 0.15,
     roughness: 0.08,
     transmission: 0.72,
@@ -140,7 +139,7 @@ export function initThreeStage(callbacks = {}) {
   const geoCrystalMat = new THREE.MeshPhysicalMaterial({
     color: 0xffc238,
     emissive: 0xe87418,
-    emissiveIntensity: 0.72,
+    emissiveIntensity: 0.7,
     metalness: 0.22,
     roughness: 0.08,
     transmission: 0.65,
@@ -194,20 +193,19 @@ export function initThreeStage(callbacks = {}) {
         if (r > 1.0) discard;
 
         float angle = atan(p.y, p.x);
-        // 12 Spina di Rosula sunbeams rotating gently
-        float rays1 = pow(0.5 + 0.5 * cos(angle * 12.0 - uTime * 0.45), 3.0);
-        float rays2 = pow(0.5 + 0.5 * cos(angle * 6.0 + uTime * 0.3), 2.0);
-        float radialFalloff = smoothstep(1.0, 0.08, r);
-        float coreGlow = exp(-r * r * 4.2);
+        float rays1 = pow(0.5 + 0.5 * cos(angle * 12.0 - uTime * 0.4), 3.2);
+        float rays2 = pow(0.5 + 0.5 * cos(angle * 6.0 + uTime * 0.25), 2.2);
+        float radialFalloff = smoothstep(1.0, 0.1, r);
+        float coreGlow = exp(-r * r * 4.5);
 
         vec3 dayCol = mix(vec3(0.95, 0.52, 0.15), vec3(1.0, 0.88, 0.48), coreGlow);
         vec3 nightCol = mix(vec3(0.18, 0.48, 0.96), vec3(0.65, 0.88, 1.0), coreGlow);
         vec3 col = mix(dayCol, nightCol, uNight);
 
-        float alpha = (coreGlow * 0.42 + (rays1 * 0.18 + rays2 * 0.12) * radialFalloff) * (1.0 + uBurst * 1.45);
+        float alpha = (coreGlow * 0.36 + (rays1 * 0.16 + rays2 * 0.1) * radialFalloff) * (1.0 + uBurst * 1.4);
         alpha *= smoothstep(1.0, 0.62, r);
 
-        gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.92));
+        gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.88));
       }
     `,
     transparent: true,
@@ -216,7 +214,7 @@ export function initThreeStage(callbacks = {}) {
   });
 
   const godrayBacklight = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4), godrayMat);
-  godrayBacklight.position.set(0, 0.04, -0.36);
+  godrayBacklight.position.set(0, 0.04, -0.38);
   holder.add(godrayBacklight);
 
   // ==================================================
@@ -251,24 +249,21 @@ export function initThreeStage(callbacks = {}) {
         if (r > 1.0) discard;
 
         float angle = atan(p.y, p.x);
-        // Expanding golden rose runic wave ring
         float ringRadius = uProgress * 0.92;
         float distToRing = abs(r - ringRadius);
-        float mainRing = exp(-distToRing * distToRing * 260.0);
+        float mainRing = exp(-distToRing * distToRing * 280.0);
 
-        // Secondary inner harmonic ring
         float innerDist = abs(r - ringRadius * 0.68);
-        float innerRing = exp(-innerDist * innerDist * 420.0) * 0.65;
+        float innerRing = exp(-innerDist * innerDist * 440.0) * 0.6;
 
-        // 12-point compass rose star modulation along the ring
-        float rosePattern = 0.65 + 0.35 * cos(angle * 12.0);
-        float fade = pow(1.0 - uProgress, 1.35);
+        float rosePattern = 0.68 + 0.32 * cos(angle * 12.0);
+        float fade = pow(1.0 - uProgress, 1.4);
 
         vec3 goldWave = mix(vec3(1.0, 0.72, 0.22), vec3(1.0, 0.96, 0.78), mainRing);
         vec3 blueWave = mix(vec3(0.25, 0.62, 1.0), vec3(0.82, 0.94, 1.0), mainRing);
         vec3 col = mix(goldWave, blueWave, uNight);
 
-        float alpha = (mainRing * rosePattern + innerRing) * fade * 1.35;
+        float alpha = (mainRing * rosePattern + innerRing) * fade * 1.3;
         gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0));
       }
     `,
@@ -278,7 +273,6 @@ export function initThreeStage(callbacks = {}) {
     blending: THREE.AdditiveBlending
   });
 
-  // Main frontal shockwave plane & tilted orbital shockwave plane
   const shockPlaneGeo = new THREE.PlaneGeometry(4.6, 4.6);
   const shockwaveMain = new THREE.Mesh(shockPlaneGeo, shockwaveShaderMat);
   shockwaveMain.position.z = 0.08;
@@ -289,9 +283,8 @@ export function initThreeStage(callbacks = {}) {
   shockwaveOrbital.rotation.y = Math.PI * 0.12;
   shockwaveGroup.add(shockwaveOrbital);
 
-  // 11 Rosula Shardshot Artillery Laser Streaks (Navia's 11-pellet Gunbrella blast)
   const shardBeams = [];
-  const beamGeo = new THREE.CylinderGeometry(0.004, 0.024, 0.65, 8);
+  const beamGeo = new THREE.CylinderGeometry(0.004, 0.022, 0.62, 8);
   const beamMat = new THREE.MeshBasicMaterial({
     color: 0xffe494,
     transparent: true,
@@ -313,7 +306,6 @@ export function initThreeStage(callbacks = {}) {
     });
   }
 
-  // 36 Explosive Crystallize Burst Sparks
   const sparkCount = 36;
   const sparkGeo = new THREE.BufferGeometry();
   const sparkPositions = new Float32Array(sparkCount * 3);
@@ -333,18 +325,17 @@ export function initThreeStage(callbacks = {}) {
   }
   sparkGeo.setAttribute("position", new THREE.BufferAttribute(sparkPositions, 3));
   const sparkMat = new THREE.PointsMaterial({
-    size: 0.22,
+    size: 0.2,
     map: goldBloomTex,
     transparent: true,
     opacity: 0,
     depthWrite: false,
     blending: THREE.AdditiveBlending
   });
-  const burstSparkSystem = new THREE.Points(sparkGeo, sparkMat);
-  shockwaveGroup.add(burstSparkSystem);
+  shockwaveGroup.add(new THREE.Points(sparkGeo, sparkMat));
 
   // ==================================================
-  // MODE 1 GROUP: SOVEREIGN HOLOGRAPHIC CARD + 3D PARASOL HALO
+  // MODE 1 GROUP: SOVEREIGN HOLOGRAPHIC CARD + HOLLOW ASTROLABE HALO
   // ==================================================
   const sovereignGroup = new THREE.Group();
   holder.add(sovereignGroup);
@@ -398,6 +389,7 @@ export function initThreeStage(callbacks = {}) {
     }
   `;
 
+  // Crystal-Clear Portrait Shader: Pure artwork in center, soft silk sheen on tilt, golden rim border
   const holoFragmentShader = `
     uniform sampler2D uMap;
     uniform float uTime;
@@ -426,21 +418,20 @@ export function initThreeStage(callbacks = {}) {
 
       vec4 texColor = texture2D(uMap, vUv);
 
-      // Diagonal specular glare sweep + Salute flash surge
+      // Soft physical silk-finish light reflection (never obscures the portrait)
       float sweepPos = (vUv.x * 0.85 + vUv.y * 0.65) - (uTilt.x * 0.65 + uTilt.y * 0.55) - 0.75;
-      float glare = exp(-sweepPos * sweepPos * 14.0) * 0.42 + uBurst * 0.32;
+      float glare = exp(-sweepPos * sweepPos * 16.0) * 0.22 + uBurst * 0.2;
 
-      // Holographic diamond lattice
-      vec2 grid = fract(vUv * vec2(18.0, 25.0));
-      float diamond = smoothstep(0.44, 0.5, abs(grid.x - 0.5) + abs(grid.y - 0.5));
-      float holoPhase = vUv.x * 1.4 + vUv.y * 1.8 + uTilt.x * 1.5 - uTilt.y * 1.2 + uTime * 0.16;
-      vec3 foil = palette(holoPhase, uFoilMode) * (0.16 + 0.15 * (1.0 - diamond));
+      // Subtle iridescent foil restricted strictly to the outer perimeter rim
+      float edgeMask = smoothstep(-0.22, 0.0, dist);
+      float holoPhase = vUv.x * 1.2 + vUv.y * 1.5 + uTilt.x * 1.4 - uTilt.y * 1.1 + uTime * 0.14;
+      vec3 edgeFoil = palette(holoPhase, uFoilMode) * edgeMask * (0.18 + length(uTilt) * 0.25);
 
-      float border = smoothstep(-0.025, -0.005, dist) - smoothstep(-0.005, 0.0, dist);
+      float border = smoothstep(-0.024, -0.005, dist) - smoothstep(-0.005, 0.0, dist);
       vec3 goldFrame = mix(vec3(0.98, 0.79, 0.34), vec3(0.45, 0.72, 1.0), uNight);
 
-      vec3 finalRgb = texColor.rgb + foil * (0.38 + length(uTilt) * 0.75 + uBurst * 0.5) + vec3(1.0, 0.94, 0.78) * glare;
-      finalRgb = mix(finalRgb, goldFrame * (1.0 + uBurst * 0.6), border * 0.9);
+      vec3 finalRgb = texColor.rgb + edgeFoil + vec3(1.0, 0.95, 0.84) * glare;
+      finalRgb = mix(finalRgb, goldFrame * (1.0 + uBurst * 0.5), border * 0.92);
 
       gl_FragColor = vec4(finalRgb, 1.0);
     }
@@ -491,7 +482,7 @@ export function initThreeStage(callbacks = {}) {
   cardGroup.add(backFaceMesh);
 
   // Corner Sapphire Gems with Volumetric Bloom Auras
-  const cornerGemGeo = new THREE.OctahedronGeometry(0.075, 0);
+  const cornerGemGeo = new THREE.OctahedronGeometry(0.072, 0);
   const bloomSprites = [];
   [
     [-cardW / 2 + 0.05, cardH / 2 - 0.05],
@@ -501,24 +492,24 @@ export function initThreeStage(callbacks = {}) {
   ].forEach(([cx, cy]) => {
     const gem = new THREE.Mesh(cornerGemGeo, sapphireMat);
     gem.position.set(cx, cy, 0);
-    gem.scale.set(0.95, 1.4, 1.35);
-    const halo = createBloomSprite(true, 0.36);
+    gem.scale.set(0.92, 1.38, 1.32);
+    const halo = createBloomSprite(true, 0.34);
     gem.add(halo);
-    bloomSprites.push({ sprite: halo, baseScale: 0.36 });
+    bloomSprites.push({ sprite: halo, baseScale: 0.34 });
     cardGroup.add(gem);
   });
 
   const crestGroup = new THREE.Group();
   crestGroup.position.set(0, cardH / 2 + 0.08, 0);
-  crestGroup.add(new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 16, 32), goldMat));
-  const crestGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.08, 0), sapphireMat);
-  const crestHalo = createBloomSprite(true, 0.42);
+  crestGroup.add(new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.02, 16, 32), goldMat));
+  const crestGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.078, 0), sapphireMat);
+  const crestHalo = createBloomSprite(true, 0.4);
   crestGem.add(crestHalo);
-  bloomSprites.push({ sprite: crestHalo, baseScale: 0.42 });
+  bloomSprites.push({ sprite: crestHalo, baseScale: 0.4 });
   crestGroup.add(crestGem);
 
   for (let i = 0; i < 8; i++) {
-    const spoke = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.13, 6), goldMat);
+    const spoke = new THREE.Mesh(new THREE.ConeGeometry(0.024, 0.12, 6), goldMat);
     const angle = (i / 8) * Math.PI * 2;
     spoke.position.set(Math.cos(angle) * 0.17, Math.sin(angle) * 0.17, 0);
     spoke.rotation.z = angle - Math.PI / 2;
@@ -526,49 +517,49 @@ export function initThreeStage(callbacks = {}) {
   }
   cardGroup.add(crestGroup);
 
-  // 3D Golden Gunbrella / Parasol Rose Compass Halo behind the Card
+  // Hollow Art Deco Astrolabe Halo behind the Card (Zero center spokes, never blocks face!)
   const parasolHalo = new THREE.Group();
-  parasolHalo.position.set(0, 0.05, -0.26);
+  parasolHalo.position.set(0, 0.02, -0.28);
   sovereignGroup.add(parasolHalo);
 
-  parasolHalo.add(new THREE.Mesh(new THREE.TorusGeometry(1.18, 0.018, 16, 64), goldMat));
-  parasolHalo.add(new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.012, 12, 48), goldMat));
+  parasolHalo.add(new THREE.Mesh(new THREE.TorusGeometry(1.18, 0.015, 16, 64), goldMat));
+  parasolHalo.add(new THREE.Mesh(new THREE.TorusGeometry(1.04, 0.009, 12, 64), goldMat));
 
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2;
-    const rib = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.014, 1.18, 8), goldMat);
-    rib.position.set(Math.cos(angle) * 0.59, Math.sin(angle) * 0.59, 0);
-    rib.rotation.z = angle - Math.PI / 2;
-    parasolHalo.add(rib);
+    // Short outer rim ticks (between r=1.04 and r=1.22 only!)
+    const rimTick = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.012, 0.18, 8), goldMat);
+    rimTick.position.set(Math.cos(angle) * 1.11, Math.sin(angle) * 1.11, 0);
+    rimTick.rotation.z = angle - Math.PI / 2;
+    parasolHalo.add(rimTick);
 
     const isSapph = i % 2 !== 0;
     const tipGem = new THREE.Mesh(
-      new THREE.OctahedronGeometry(0.055, 0),
+      new THREE.OctahedronGeometry(0.052, 0),
       isSapph ? sapphireMat : geoCrystalMat
     );
-    tipGem.position.set(Math.cos(angle) * 1.24, Math.sin(angle) * 1.24, 0);
+    tipGem.position.set(Math.cos(angle) * 1.25, Math.sin(angle) * 1.25, 0);
     tipGem.rotation.z = angle;
-    const tipHalo = createBloomSprite(isSapph, 0.28);
+    const tipHalo = createBloomSprite(isSapph, 0.26);
     tipGem.add(tipHalo);
-    bloomSprites.push({ sprite: tipHalo, baseScale: 0.28 });
+    bloomSprites.push({ sprite: tipHalo, baseScale: 0.26 });
     parasolHalo.add(tipGem);
   }
 
-  // Orbiting 3D Geo & Sapphire Crystals with Volumetric Unreal Bloom Auras
+  // Orbiting 3D Geo & Sapphire Crystals
   const orbitGroup = new THREE.Group();
   holder.add(orbitGroup);
 
   const crystals = [];
-  const crystalGeo = new THREE.OctahedronGeometry(0.12, 0);
+  const crystalGeo = new THREE.OctahedronGeometry(0.115, 0);
   for (let i = 0; i < 8; i++) {
     const isSapphire = i % 3 === 0;
     const mesh = new THREE.Mesh(crystalGeo, isSapphire ? sapphireMat : geoCrystalMat);
     mesh.scale.set(0.75, 1.65, 0.75);
 
-    // Volumetric Unreal Bloom Aura around each 3D Crystal
-    const aura = createBloomSprite(isSapphire, 0.52);
+    const aura = createBloomSprite(isSapphire, 0.48);
     mesh.add(aura);
-    bloomSprites.push({ sprite: aura, baseScale: 0.52 });
+    bloomSprites.push({ sprite: aura, baseScale: 0.48 });
 
     if (i % 2 === 0) {
       const miniRing = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.008, 8, 24), goldMat);
@@ -578,9 +569,9 @@ export function initThreeStage(callbacks = {}) {
     crystals.push({
       mesh,
       baseAngle: (i / 8) * Math.PI * 2,
-      radius: 1.32 + (i % 2) * 0.22,
+      radius: 1.36 + (i % 2) * 0.22,
       baseY: (i - 3.5) * 0.28,
-      speed: 0.45 + (i % 3) * 0.15,
+      speed: 0.42 + (i % 3) * 0.14,
       phase: i * 0.9
     });
     orbitGroup.add(mesh);
@@ -636,8 +627,7 @@ export function initThreeStage(callbacks = {}) {
     pickableMeshes.push(face);
     nodeGroup.add(face);
 
-    // Subtle corner star bloom on constellation nodes
-    const starGlow = createBloomSprite(i % 2 !== 0, 0.45);
+    const starGlow = createBloomSprite(i % 2 !== 0, 0.42);
     starGlow.position.set(0, 0, -0.03);
     nodeGroup.add(starGlow);
 
@@ -685,7 +675,7 @@ export function initThreeStage(callbacks = {}) {
   // ==================================================
   // FLOATING GOLDEN ROSE PETAL & STARLIGHT PARTICLES
   // ==================================================
-  const particleCount = 120;
+  const particleCount = 110;
   const pGeo = new THREE.BufferGeometry();
   const pPositions = new Float32Array(particleCount * 3);
   for (let i = 0; i < particleCount; i++) {
@@ -695,18 +685,19 @@ export function initThreeStage(callbacks = {}) {
   }
   pGeo.setAttribute("position", new THREE.BufferAttribute(pPositions, 3));
 
-  const particleSystem = new THREE.Points(
-    pGeo,
-    new THREE.PointsMaterial({
-      size: 0.11,
-      map: goldBloomTex,
-      transparent: true,
-      opacity: 0.9,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    })
+  scene.add(
+    new THREE.Points(
+      pGeo,
+      new THREE.PointsMaterial({
+        size: 0.1,
+        map: goldBloomTex,
+        transparent: true,
+        opacity: 0.85,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      })
+    )
   );
-  scene.add(particleSystem);
 
   // Normalize holder scale per spec (3.15 / maxDim)
   const box = new THREE.Box3().setFromObject(cardGroup);
@@ -714,7 +705,6 @@ export function initThreeStage(callbacks = {}) {
   const maxDim = Math.max(size.x, size.y, size.z) || 1;
   holder.scale.setScalar((3.15 / maxDim) * 0.68);
 
-  // Load initial Front & Back Sovereign Cards
   let currentCardIdx = 0;
   let currentFoilTheme = "geo";
 
@@ -754,11 +744,10 @@ export function initThreeStage(callbacks = {}) {
   let carouselSpinTarget = 0;
   let carouselSpinCurrent = 0;
   let saluteBurst = 0;
-  let shockwaveProgress = 1.0; // 0.0 -> 1.0 active expansion
+  let shockwaveProgress = 1.0;
 
   function launchShockwave() {
     shockwaveProgress = 0.0;
-    // Reset 36 Crystallize sparks to center origin
     const arr = sparkGeo.attributes.position.array;
     for (let i = 0; i < sparkCount; i++) {
       arr[i * 3] = 0;
@@ -834,7 +823,6 @@ export function initThreeStage(callbacks = {}) {
     saluteFlashLight.color.setHex(isNight ? 0x70b5ff : 0xffdf7a);
   }
 
-  // Canvas drag / click interaction + 3D Raycaster Card Picking
   let pointerDownX = 0;
   let pointerDownY = 0;
   let isDragging = false;
@@ -849,7 +837,6 @@ export function initThreeStage(callbacks = {}) {
     const dx = e.clientX - pointerDownX;
     const dy = e.clientY - pointerDownY;
     if (Math.hypot(dx, dy) < 10) {
-      // Check if user clicked a 3D Card in Carousel or Constellation mode
       if (stageMode !== "sovereign") {
         pointerNdc.x = (e.clientX / window.innerWidth) * 2 - 1;
         pointerNdc.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -875,7 +862,6 @@ export function initThreeStage(callbacks = {}) {
     }
   });
 
-  // Pointer Parallax & Layout (Exact Spec Math)
   const target = { x: 0, y: 0 };
   const look = { x: 0, y: 0 };
   let baseX = 0.05;
@@ -919,7 +905,6 @@ export function initThreeStage(callbacks = {}) {
   window.addEventListener("resize", layout);
   canvas.classList.add("is-ready");
 
-  // Fire an initial gentle welcome bloom wave on load
   setTimeout(() => {
     saluteBurst = 0.85;
     launchShockwave();
@@ -946,7 +931,9 @@ export function initThreeStage(callbacks = {}) {
     carouselSpinCurrent += (carouselSpinTarget - carouselSpinCurrent) * 0.07;
     saluteBurst *= 0.935;
 
-    // Update shader uniforms & dynamic bloom intensity
+    // Only rotate cardGroup on flip so parasolHalo always stays behind the card!
+    cardGroup.rotation.y = currentFlipY;
+
     holoUniforms.uTime.value = t;
     holoUniforms.uTilt.value.set(look.x, look.y);
     holoUniforms.uBurst.value = saluteBurst;
@@ -957,27 +944,23 @@ export function initThreeStage(callbacks = {}) {
     godrayUniforms.uTime.value = t;
     godrayUniforms.uBurst.value = saluteBurst;
 
-    // Pulse emissive bloom on crystals & flash light
-    geoCrystalMat.emissiveIntensity = 0.72 + Math.sin(t * 3.0) * 0.15 + saluteBurst * 1.45;
-    sapphireMat.emissiveIntensity = 0.75 + Math.cos(t * 2.6) * 0.15 + saluteBurst * 1.45;
-    goldMat.emissiveIntensity = 0.25 + saluteBurst * 0.65;
-    saluteFlashLight.intensity = saluteBurst * 9.5;
+    geoCrystalMat.emissiveIntensity = 0.7 + Math.sin(t * 3.0) * 0.14 + saluteBurst * 1.4;
+    sapphireMat.emissiveIntensity = 0.72 + Math.cos(t * 2.6) * 0.14 + saluteBurst * 1.4;
+    goldMat.emissiveIntensity = 0.22 + saluteBurst * 0.6;
+    saluteFlashLight.intensity = saluteBurst * 9.0;
 
-    // Pulse volumetric bloom sprites
     bloomSprites.forEach((b, idx) => {
-      const pulse = 1.0 + Math.sin(t * 3.2 + idx) * 0.12 + saluteBurst * 0.65;
+      const pulse = 1.0 + Math.sin(t * 3.2 + idx) * 0.12 + saluteBurst * 0.6;
       b.sprite.scale.setScalar(b.baseScale * pulse);
     });
 
-    // Update 3D Crystal Salute Shockwave Ring, 11 Rosula Beams & 36 Burst Sparks
     if (shockwaveProgress < 1.0) {
       shockwaveProgress = Math.min(1.0, shockwaveProgress + dt * 1.15);
       shockwaveUniforms.uProgress.value = shockwaveProgress;
       shockwaveMain.rotation.z = shockwaveProgress * 1.2;
       shockwaveOrbital.rotation.z = -shockwaveProgress * 1.5;
 
-      // 11 Rosula Shardshot beams shooting radially outward
-      const beamAlpha = Math.sin(shockwaveProgress * Math.PI) * 0.95;
+      const beamAlpha = Math.sin(shockwaveProgress * Math.PI) * 0.92;
       beamMat.opacity = beamAlpha;
       shardBeams.forEach((b) => {
         const dist = 0.35 + shockwaveProgress * b.speed;
@@ -989,8 +972,7 @@ export function initThreeStage(callbacks = {}) {
         b.mesh.scale.set(1, 0.6 + shockwaveProgress * 1.6, 1);
       });
 
-      // 36 Explosive Crystallize sparks
-      sparkMat.opacity = (1.0 - shockwaveProgress) * 0.98;
+      sparkMat.opacity = (1.0 - shockwaveProgress) * 0.96;
       const sArr = sparkGeo.attributes.position.array;
       for (let i = 0; i < sparkCount; i++) {
         const v = sparkVelocities[i];
@@ -1008,20 +990,17 @@ export function initThreeStage(callbacks = {}) {
 
     if (reduced) {
       pivot.position.set(baseX + look.x * 0.06, baseY, 0);
-      pivot.rotation.set(look.y * 0.1, look.x * 0.22 + currentFlipY, 0);
+      pivot.rotation.set(look.y * 0.1, look.x * 0.22, 0);
     } else {
       const bob = Math.sin(t * 2.2) * 0.09;
       pivot.position.set(baseX + look.x * 0.06, baseY + bob, 0);
       pivot.rotation.z = Math.sin(t * 2.2 + 0.6) * 0.025;
-      pivot.rotation.y =
-        look.x * 0.22 +
-        Math.sin(t * 0.9) * 0.05 +
-        (stageMode === "sovereign" ? currentFlipY : 0);
+      pivot.rotation.y = look.x * 0.22 + Math.sin(t * 0.9) * 0.05;
       pivot.rotation.x = look.y * 0.1 + Math.cos(t * 2.2) * 0.02;
 
       crestGroup.rotation.z = t * 0.55;
-      parasolHalo.rotation.z = -t * 0.28 - saluteBurst * 0.8;
-      const haloScale = 1 + saluteBurst * 0.24 + Math.sin(t * 2.0) * 0.025;
+      parasolHalo.rotation.z = -t * 0.26 - saluteBurst * 0.75;
+      const haloScale = 1 + saluteBurst * 0.22 + Math.sin(t * 2.0) * 0.025;
       parasolHalo.scale.setScalar(haloScale);
 
       if (stageMode !== "sovereign") {

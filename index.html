@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Navia — Spina di Rosula | 3D Sovereign Showcase &amp; Royal Archive</title>
-  <meta name="description" content="Interactive 3D WebGL Showcase for Navia (Spina di Rosula) featuring GLSL Holographic Foil Shaders, Volumetric Unreal Bloom, Fontaine Symphonic Music Box, 5-Star Wish Summon, and 22-Photo Royal Archive.">
-  <meta property="og:title" content="Navia — Spina di Rosula | 3D Sovereign Showcase">
-  <meta property="og:description" content="Explore the 3D Holographic Navia Card Stage, Fontaine Music Box Waltz, 5-Star Golden Meteor Wish Summon, and 22-Photo 4K Archive.">
+  <title>NAVIA | Spina di Rosula Royal Archive</title>
+  <meta name="description" content="Interactive 3D WebGL Showcase for Navia of the Spina di Rosula featuring custom GLSL Shaders, Volumetric Bloom, Fontaine Symphonic Music Box, Japanese Voice Lines by Toyosaki Aki, and 22-Photo Royal Archive.">
+  <meta property="og:title" content="NAVIA | Spina di Rosula Royal Archive">
+  <meta property="og:description" content="Explore the 3D Navia Sovereign Stage, Fontaine Music Box Waltz, Japanese Voice Lines, and 22-Photo 4K Archive.">
   <meta property="og:image" content="./Navia/1351553.jpeg">
   <meta name="theme-color" content="#e8742a">
 
-  <!-- Inline SVG Sun Emblem Favicon (Zero 404s) -->
+  <!-- Inline SVG Sun Emblem Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23e8742a'/%3E%3Ccircle cx='16' cy='16' r='6.5' fill='%231a1410'/%3E%3Cpath fill='%231a1410' d='M16 2l2 6h-4zM16 30l2-6h-4zM2 16l6 2v-4zM30 16l-6 2v-4zM6.1 6.1l5.6 2.8-2.8 2.8zM25.9 25.9l-5.6-2.8 2.8-2.8zM25.9 6.1l-2.8 5.6-2.8-2.8zM6.1 25.9l2.8-5.6 2.8 2.8z'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Questrial&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <!-- Modular Stylesheets -->
-  <link rel="stylesheet" href="./css/variables.css?v=3">
-  <link rel="stylesheet" href="./css/layout.css?v=3">
-  <link rel="stylesheet" href="./css/components.css?v=3">
-  <link rel="stylesheet" href="./css/modals.css?v=3">
+  <link rel="stylesheet" href="./css/variables.css?v=4">
+  <link rel="stylesheet" href="./css/layout.css?v=4">
+  <link rel="stylesheet" href="./css/components.css?v=4">
+  <link rel="stylesheet" href="./css/modals.css?v=4">
 
   <!-- Three.js r160 Import Map -->
   <script type="importmap">
@@ -68,23 +68,15 @@
 
     <!-- z-index 5: Top-Center 3D Stage Mode Switcher & Default Fontaine Music Box -->
     <div class="stage-switcher" aria-label="3D Stage Mode and Music Box">
-      <button class="stage-mode-btn is-active" data-stage-mode="sovereign">
-        &#10022; Sovereign Card
-      </button>
-      <button class="stage-mode-btn" data-stage-mode="carousel">
-        &#9678; 3D Carousel Ring
-      </button>
-      <button class="stage-mode-btn" data-stage-mode="constellation">
-        &#9733; Rosa Constellation
-      </button>
+      <button class="stage-mode-btn is-active" data-stage-mode="sovereign">Card</button>
+      <button class="stage-mode-btn" data-stage-mode="carousel">Ring</button>
+      <button class="stage-mode-btn" data-stage-mode="constellation">Stars</button>
       <div class="stage-divider"></div>
-      <button class="music-btn is-playing" id="btnMusicBox" title="Play / Pause Fontaine Symphonic Music Box (M)">
-        <canvas class="music-viz" id="musicViz" width="34" height="16"></canvas>
+      <button class="music-btn is-playing" id="btnMusicBox" title="Play or Pause Fontaine Symphonic Music Box (M)">
+        <canvas class="music-viz" id="musicViz" width="32" height="14"></canvas>
         <span id="musicBoxLabel">La Rose Radieuse</span>
       </button>
-      <button class="stage-mode-btn" id="btnNextTrack" title="Next Fontaine Soundtrack (N)">
-        &#9835; Next
-      </button>
+      <button class="stage-mode-btn" id="btnNextTrack" title="Next Fontaine Soundtrack (N)">Next</button>
     </div>
 
     <!-- z-index 5: Headline -->
@@ -95,33 +87,29 @@
       <span class="u indent">breezy</span>
     </h1>
 
-    <!-- Lore Badge & Keyboard Shortcuts under Headline -->
+    <!-- Left Editorial Lore Column -->
     <div class="hero-meta">
-      <div class="hero-meta__tag"><i></i> Spina di Rosula &bull; President &amp; Commander</div>
+      <div class="hero-meta__tag">Spina di Rosula / President</div>
       <p class="hero-meta__quote" id="heroQuote">
-        &ldquo;From Poisson to the Court of Fontaine — every commission handled with golden precision and a fresh box of macarons.&rdquo;
+        &ldquo;Every commission in the Court of Fontaine handled with golden precision and a fresh box of macarons.&rdquo;
       </p>
-      <div class="shortcut-hint">
-        Keys: <kbd>Space</kbd> Salute <kbd>F</kbd> Flip <kbd>W</kbd> 5★ Wish <kbd>M</kbd> Music <kbd>N</kbd> Track <kbd>1-3</kbd> 3D Mode
-      </div>
     </div>
 
-    <!-- z-index 5: Bottom Interactive HUD Controls -->
+    <!-- z-index 5: Single-Row Bottom Editorial Horizon Bar -->
     <div class="hud-dock">
       <div class="hud-group">
-        <span class="hud-label hide-sm">4K Scene</span>
         <div class="wp-thumbs" id="wpThumbs"></div>
-        <button class="hud-btn" id="btnNextWp" title="Switch 4K Navia Wallpaper (Arrow Right)">Next BG &#8635;</button>
-        <button class="hud-btn" id="btnAutoCinema" title="Auto-Cinema Exhibition Mode (C)">Auto-Cinema &#9654;</button>
+        <button class="hud-btn" id="btnNextWp" title="Switch 4K Navia Scene">Scene</button>
+        <button class="hud-btn" id="btnAutoCinema" title="Auto-Cinema Exhibition Mode">Cinema</button>
       </div>
 
       <div class="hud-group">
-        <button class="hud-btn hud-btn--wish" id="btnOpenWish" title="Launch 5-Star Golden Meteor Wish Summon (W)">5&#9733; Wish &#10022;</button>
-        <button class="hud-btn hud-btn--gold" id="btnSalute" title="Fire Geo Crystal Salute (Space)">Crystal Salute &#10022;</button>
-        <button class="hud-btn" id="btnFlipCard" title="Flip or Spin 3D Stage (F)">Flip 3D &#8644;</button>
-        <button class="hud-btn" id="btnNextCard" title="Switch 3D Card Portrait Art">Card Art (1/22) &rarr;</button>
-        <button class="hud-btn hud-btn--studio" id="btnOpenStudio" title="Customize & Export HD PNG Card">Card Studio &#9998;</button>
-        <button class="hud-btn hide-sm" id="btnOpenGallery" title="View All 22 Local Navia Photos">22 Photos &#9783;</button>
+        <button class="hud-btn hud-btn--wish" id="btnOpenWish" title="5-Star Golden Meteor Wish Summon">Wish</button>
+        <button class="hud-btn hud-btn--gold" id="btnSalute" title="Fire Geo Crystal Salute &amp; JP Burst Voice">Salute</button>
+        <button class="hud-btn" id="btnFlipCard" title="Flip 3D Card &amp; Play JP Skill Voice">Flip</button>
+        <button class="hud-btn" id="btnNextCard" title="Switch 3D Card Artwork">Art 01/22</button>
+        <button class="hud-btn hud-btn--studio" id="btnOpenStudio" title="Customize &amp; Export HD PNG Card">Studio</button>
+        <button class="hud-btn hide-sm" id="btnOpenGallery" title="Open 22-Photo Royal Archive">Archive</button>
       </div>
     </div>
 
@@ -133,35 +121,35 @@
       <ul class="menu__list">
         <li class="menu__item">
           <a class="menu__link" href="#platform" data-menu-action="wish">
-            <small>01</small>platform <span class="menu__sub">5★ wish summon</span>
+            <small>01</small>platform <span class="menu__sub">royal wish</span>
             <img class="menu__thumb" src="./Navia/1346600.jpeg" alt="Platform">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
           <a class="menu__link" href="#story" data-menu-action="dossier">
-            <small>02</small>story <span class="menu__sub">chronicle &amp; lore</span>
+            <small>02</small>story <span class="menu__sub">jp voice &amp; lore</span>
             <img class="menu__thumb" src="./Navia/Navia.jpg" alt="Story">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
           <a class="menu__link" href="#community" data-menu-action="gallery">
-            <small>03</small>community <span class="menu__sub">22-photo archive</span>
+            <small>03</small>community <span class="menu__sub">22 photos</span>
             <img class="menu__thumb" src="./Navia/1346603.jpeg" alt="Community">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
           <a class="menu__link" href="#billing" data-menu-action="studio">
-            <small>04</small>billing <span class="menu__sub">card studio &amp; png</span>
+            <small>04</small>billing <span class="menu__sub">card studio</span>
             <img class="menu__thumb" src="./Navia/1344732.jpeg" alt="Card Studio">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
           <a class="menu__link" href="#connect" data-menu-action="carousel">
-            <small>05</small>connect <span class="menu__sub">3d carousel ring</span>
+            <small>05</small>connect <span class="menu__sub">3d ring</span>
             <img class="menu__thumb" src="./Navia/Navia%20icon.jpg" alt="Connect">
             <span class="arrow">&rarr;</span>
           </a>
@@ -181,11 +169,11 @@
     <!-- z-index 8: Top Nav -->
     <header class="nav">
       <nav class="nav__links">
-        <a href="#platform" data-nav-action="wish">5★ wish</a>
-        <button class="toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle Fontaine Daylight / Poisson Midnight"></button>
+        <a href="#platform" data-nav-action="wish">platform</a>
+        <button class="toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle Fontaine Daylight or Poisson Midnight"></button>
         <a href="#story" data-nav-action="dossier">story</a>
         <a href="#community" class="hide-sm" data-nav-action="gallery">community</a>
-        <a href="#studio" class="hide-sm" data-nav-action="studio">card studio</a>
+        <a href="#studio" class="hide-sm" data-nav-action="studio">studio</a>
       </nav>
 
       <div class="brand" id="brandPill">
@@ -223,13 +211,13 @@
         <header class="drawer-head">
           <div class="drawer-title">
             Spina di Rosula Royal Archive
-            <span>22 Local Photos</span>
+            <span>22 Local Artworks</span>
           </div>
           <div class="filter-tabs" id="galleryFilters">
-            <button class="filter-tab is-active" data-filter="all">All Photos (22)</button>
-            <button class="filter-tab" data-filter="wallpaper">4K Wallpapers (8)</button>
-            <button class="filter-tab" data-filter="portrait">Portraits &amp; TCG (4)</button>
-            <button class="filter-tab" data-filter="icon">Icons &amp; Expressions (10)</button>
+            <button class="filter-tab is-active" data-filter="all">All (22)</button>
+            <button class="filter-tab" data-filter="wallpaper">4K Scenes (8)</button>
+            <button class="filter-tab" data-filter="portrait">Portraits (4)</button>
+            <button class="filter-tab" data-filter="icon">Icons (10)</button>
           </div>
           <button class="drawer-close" id="closeGallery" aria-label="Close gallery">&times;</button>
         </header>
@@ -238,12 +226,12 @@
     </section>
 
     <!-- z-index 9: Interactive 3D Card Studio & HD PNG Exporter -->
-    <section class="drawer-overlay" id="studioDrawer" aria-label="Navia 3D Card Studio & PNG Exporter">
+    <section class="drawer-overlay" id="studioDrawer" aria-label="Navia 3D Card Studio and PNG Exporter">
       <div class="drawer-box">
         <header class="drawer-head">
           <div class="drawer-title">
-            Sovereign Hologram Card Studio
-            <span>Custom Foil &amp; HD PNG Export</span>
+            Sovereign Card Studio
+            <span>Custom Filigree &amp; HD PNG Export</span>
           </div>
           <button class="drawer-close" id="closeStudio" aria-label="Close card studio">&times;</button>
         </header>
@@ -258,7 +246,7 @@
                 <input class="studio-input" id="studioTitleInput" type="text" value="N A V I A" maxlength="22">
               </div>
               <div class="studio-field">
-                <label for="studioSubInput">Royal Subtitle / Honorific</label>
+                <label for="studioSubInput">Royal Subtitle</label>
                 <input class="studio-input" id="studioSubInput" type="text" value="DEMOISELLE OF SPINA DI ROSULA" maxlength="38">
               </div>
               <div class="studio-field">
@@ -268,7 +256,7 @@
             </div>
 
             <div class="studio-field">
-              <label>Holographic Foil Shader &amp; Filigree Theme</label>
+              <label>Filigree &amp; Silk Rim Finish</label>
               <div class="foil-options" id="foilOptions">
                 <button class="foil-chip is-active" data-foil="geo">
                   <i style="background:#f7c654"></i> Radiant Geo Gold
@@ -286,26 +274,26 @@
             </div>
 
             <div class="studio-field">
-              <label>Choose Artwork from All 22 Local Navia Photos</label>
+              <label>Select Artwork from 22 Local Photos</label>
               <div class="studio-photo-strip" id="studioPhotoStrip"></div>
             </div>
 
             <div class="studio-actions">
-              <button class="studio-cta" id="btnApplyTo3D">&#10022; Apply to Live 3D Stage</button>
-              <button class="studio-cta studio-cta--secondary" id="btnExportPng">&#8681; Download HD Card (.PNG)</button>
+              <button class="studio-cta" id="btnApplyTo3D">Apply to 3D Stage</button>
+              <button class="studio-cta studio-cta--secondary" id="btnExportPng">Download HD Card (.PNG)</button>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- z-index 9: Character Chronicle, Arsenal & Voice Dossier Modal -->
+    <!-- z-index 9: Character Chronicle, Arsenal & Japanese Voice Dossier Modal -->
     <section class="drawer-overlay" id="dossierDrawer" aria-label="Navia Character Chronicle">
       <div class="drawer-box">
         <header class="drawer-head">
           <div class="drawer-title">
-            Navia Caspar &mdash; Helm of the Radiant Rose
-            <span>Geo &bull; 5-Star Sovereign</span>
+            Navia Caspar / Helm of the Radiant Rose
+            <span>CV: Toyosaki Aki (豊崎愛生)</span>
           </div>
           <button class="drawer-close" id="closeDossier" aria-label="Close chronicle">&times;</button>
         </header>
@@ -321,7 +309,7 @@
               </div>
               <div class="stat-box">
                 <small>Vision &amp; Arkhe</small>
-                <strong>Geo &bull; Ousia</strong>
+                <strong>Geo / Ousia</strong>
               </div>
               <div class="stat-box">
                 <small>Signature Armament</small>
@@ -335,43 +323,43 @@
 
             <div class="arsenal-grid">
               <div class="arsenal-card">
-                <h4>&#9876; Verdict (5-Star Broadaxe)</h4>
+                <h4>Verdict (5-Star Broadaxe)</h4>
                 <p>Forged with crystalline sapphires and golden filigree; harnesses Elemental Shards to amplify Ceremonial Crystal Shot damage.</p>
               </div>
               <div class="arsenal-card">
-                <h4>&#9730; Rosula Gunbrella</h4>
-                <p>An elegant Fontaine parasol concealing a multi-barrel Geo shard-cannon capable of firing up to 11 Rosula Shardshots in a single volley.</p>
+                <h4>Rosula Gunbrella</h4>
+                <p>An elegant Fontaine parasol concealing a multi-barrel Geo shard cannon capable of firing up to 11 Rosula Shardshots in a single volley.</p>
               </div>
               <div class="arsenal-card">
-                <h4>&#10022; Golden Rose Cannon</h4>
-                <p>Calls down an artillery bombardment that salutes the battlefield while continuously generating Crystallize shards for the Spina.</p>
+                <h4>Golden Rose Cannon</h4>
+                <p>Calls down an artillery salute across the skies of Fontaine while continuously generating Crystallize shards for the Spina.</p>
               </div>
             </div>
 
             <div class="voice-list">
               <div class="voice-card" data-voice="0">
-                <h4>&#9835; JP Elemental Skill I &mdash; Toyosaki Aki (豊崎愛生)</h4>
-                <p>「避けられる？ … 気を付けなさい！」 &bull; <em>Yokerareru? ... Kiwotsukenasai!</em> (&ldquo;Can you avoid this? ... Be careful!&rdquo;)</p>
+                <h4>JP Elemental Skill I / Ceremonial Crystalshot</h4>
+                <p>避けられる？ 気を付けなさい！ &ldquo;Can you avoid this? Be careful!&rdquo;</p>
               </div>
               <div class="voice-card" data-voice="1">
-                <h4>&#9835; JP Elemental Skill II &mdash; Toyosaki Aki (豊崎愛生)</h4>
-                <p>「あと何発でしょー？ … 堂々不意打ち！」 &bull; <em>Ato nanpatsu deshou? ... Doudou fuiuchi!</em> (&ldquo;How many more bullets? ... Surprise attack!&rdquo;)</p>
+                <h4>JP Elemental Skill II / Ceremonial Crystalshot</h4>
+                <p>あと何発でしょー？ 堂々不意打ち！ &ldquo;How many more bullets? Surprise attack!&rdquo;</p>
               </div>
               <div class="voice-card" data-voice="2">
-                <h4>&#9835; JP Elemental Skill III &mdash; Toyosaki Aki (豊崎愛生)</h4>
-                <p>「これって…“傘弾銃”？ … やっほ～！」 &bull; <em>Kore tte... "Sandanjuu"? ... Yahhoo~!</em> (&ldquo;Is this... 'An Umbrella gun'? ... Yahhoo~!&rdquo;)</p>
+                <h4>JP Elemental Skill III / Ceremonial Crystalshot</h4>
+                <p>これって“傘弾銃”？ やっほ～！ &ldquo;Is this an Umbrella gun? Yahhoo!&rdquo;</p>
               </div>
               <div class="voice-card" data-voice="3">
-                <h4>&#9835; JP Elemental Burst I &mdash; As the Sunlit Sky's Singing Salute</h4>
-                <p>「ファイアー！ま、岩元素なんだけどね」 &bull; <em>Faiaa! Ma, iwa gensou nandakedo ne</em> (&ldquo;Fire! Well, these are only rocks though.&rdquo;)</p>
+                <h4>JP Elemental Burst I / Sunlit Sky's Singing Salute</h4>
+                <p>ファイアー！ ま、岩元素なんだけどね &ldquo;Fire! Well, these are only rocks though.&rdquo;</p>
               </div>
               <div class="voice-card" data-voice="4">
-                <h4>&#9835; JP Elemental Burst II &mdash; Special Edition Rosecracker</h4>
-                <p>「ローズクラッカー！『棘薔薇の会』特注版よ」 &bull; <em>Roozukurakkaa! "Supina di Roosura" tokuchuuban yo</em> (&ldquo;Rosecracker! This is a special edition, 'The Thorn Rose'!&rdquo;)</p>
+                <h4>JP Elemental Burst II / Special Edition Rosecracker</h4>
+                <p>ローズクラッカー！ 『棘薔薇の会』特注版よ &ldquo;Rosecracker! Special edition of the Spina di Rosula!&rdquo;</p>
               </div>
               <div class="voice-card" data-voice="5">
-                <h4>&#9835; JP Elemental Burst III &mdash; Artillery Barrage</h4>
-                <p>「撃ち続けて～！うんうん、イイ感じ！」 &bull; <em>Uchitsuzukete~! Un un, ii kanji!</em> (&ldquo;Keep shooting! Yeah, yeah, that's good!&rdquo;)</p>
+                <h4>JP Elemental Burst III / Artillery Barrage</h4>
+                <p>撃ち続けて～！ うんうん、イイ感じ！ &ldquo;Keep shooting! Yes, that feels great!&rdquo;</p>
               </div>
             </div>
           </div>
@@ -388,11 +376,11 @@
             <img id="wishSingleImg" src="./Navia/Navia.jpg" alt="5-Star Navia Pull">
           </div>
           <div class="wish-single__meta">
-            <div class="wish-single__badge">&#10022; Geo Sovereign &bull; Rosa Multiflora</div>
+            <div class="wish-single__badge">Geo Sovereign / Rosa Multiflora</div>
             <div class="wish-single__stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
             <h2 class="wish-single__title" id="wishSingleTitle">President of Spina di Rosula</h2>
             <p class="wish-single__quote" id="wishSingleQuote">
-              &ldquo;On behalf of the Spina di Rosula — let the Golden Rose Cannon sound our salute across the skies of Fontaine!&rdquo;
+              &ldquo;Let the Golden Rose Cannon sound our salute across the skies of Fontaine!&rdquo;
             </p>
           </div>
         </div>
@@ -400,10 +388,10 @@
         <div class="wish-multi-grid" id="wishMultiGrid"></div>
 
         <div class="wish-bar">
-          <button class="studio-cta" id="btnWishEquip">&#10022; Equip Artwork to 3D Stage</button>
-          <button class="studio-cta studio-cta--secondary" id="btnWishPull1">Summon 1&times; Wish &#9733;</button>
-          <button class="studio-cta" id="btnWishPull10" style="background:linear-gradient(135deg,#f59e0b,#ec4899)">Summon 10&times; Royal Pull &#10022;</button>
-          <button class="studio-cta studio-cta--secondary" id="btnWishClose">Return to Stage &times;</button>
+          <button class="studio-cta" id="btnWishEquip">Equip Artwork to 3D Stage</button>
+          <button class="studio-cta studio-cta--secondary" id="btnWishPull1">Summon 1&times; Wish</button>
+          <button class="studio-cta" id="btnWishPull10">Summon 10&times; Royal Pull</button>
+          <button class="studio-cta studio-cta--secondary" id="btnWishClose">Return to Stage</button>
         </div>
       </div>
     </section>
@@ -412,9 +400,9 @@
     <div class="lightbox" id="lightbox">
       <img class="lightbox__img" id="lightboxImg" src="./Navia/1351553.jpeg" alt="Navia Fullscreen Preview">
       <div class="lightbox__bar">
-        <button class="hud-btn hud-btn--gold" id="lbSetBg">Set as Hero Background</button>
-        <button class="hud-btn" id="lbSetCard">Apply to 3D Hologram Card</button>
-        <button class="hud-btn" id="lbClose">Close Preview &times;</button>
+        <button class="hud-btn hud-btn--gold" id="lbSetBg">Set as Hero Scene</button>
+        <button class="hud-btn" id="lbSetCard">Apply to 3D Card</button>
+        <button class="hud-btn" id="lbClose">Close</button>
       </div>
     </div>
 
@@ -422,20 +410,20 @@
     <div class="jp-voice-banner" id="jpVoiceBanner" aria-live="polite">
       <div class="jp-voice-banner__head">
         <span class="jp-voice-banner__dot"></span>
-        <span id="jpVoiceLabel">JP VA &bull; Toyosaki Aki (豊崎愛生) &bull; BGM Paused</span>
+        <span id="jpVoiceLabel">CV: Toyosaki Aki / Ceremonial Crystalshot</span>
       </div>
-      <div class="jp-voice-banner__jp" id="jpVoiceText">「ファイアー！ま、岩元素なんだけどね」</div>
+      <div class="jp-voice-banner__jp" id="jpVoiceText">ファイアー！ ま、岩元素なんだけどね</div>
       <div class="jp-voice-banner__romaji" id="jpVoiceRomaji">Faiaa! Ma, iwa gensou nandakedo ne</div>
-      <div class="jp-voice-banner__en" id="jpVoiceEn">&ldquo;Fire! Well, these are only rocks though.&rdquo;</div>
+      <div class="jp-voice-banner__en" id="jpVoiceEn">Fire! Well, these are only rocks though.</div>
     </div>
 
     <!-- z-index 12: Notification Toast -->
-    <div class="toast" id="toast">Crystal Salute Activated</div>
+    <div class="toast" id="toast">Crystal Salute</div>
   </main>
 
   <!-- Modular JavaScript Application -->
-  <script src="./js/textures-cache.js?v=3"></script>
-  <script src="./js/jp-voices-cache.js?v=3"></script>
-  <script type="module" src="./js/app.js?v=3"></script>
+  <script src="./js/textures-cache.js?v=4"></script>
+  <script src="./js/jp-voices-cache.js?v=4"></script>
+  <script type="module" src="./js/app.js?v=4"></script>
 </body>
 </html>
