@@ -4,7 +4,7 @@
 .drawer-overlay {
   position: absolute;
   inset: 0;
-  z-index: 9;
+  z-index: 20;
   background: rgba(16, 10, 6, 0.76);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -519,7 +519,7 @@
 .lightbox {
   position: absolute;
   inset: 0;
-  z-index: 11;
+  z-index: 25;
   background: rgba(10, 6, 4, 0.92);
   backdrop-filter: blur(20px);
   display: flex;
@@ -560,7 +560,7 @@
 .wish-overlay {
   position: absolute;
   inset: 0;
-  z-index: 11;
+  z-index: 25;
   background: #070510;
   opacity: 0;
   visibility: hidden;

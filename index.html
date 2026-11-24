@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NAVIA | Spina di Rosula Royal Archive</title>
-  <meta name="description" content="Interactive 3D WebGL Showcase for Navia of the Spina di Rosula featuring custom GLSL Shaders, Volumetric Bloom, Fontaine Symphonic Music Box, Japanese Voice Lines by Toyosaki Aki, and 22-Photo Royal Archive.">
+  <meta name="description" content="Interactive 3D WebGL Showcase for Navia of the Spina di Rosula featuring custom GLSL Shaders, Volumetric Bloom, Fontaine Symphonic Music Box, 15 Studio Japanese Voice Lines by Toyosaki Aki, and 22-Photo Royal Archive.">
   <meta property="og:title" content="NAVIA | Spina di Rosula Royal Archive">
-  <meta property="og:description" content="Explore the 3D Navia Sovereign Stage, Fontaine Music Box Waltz, Japanese Voice Lines, and 22-Photo 4K Archive.">
+  <meta property="og:description" content="Explore the 3D Navia Sovereign Stage, Fontaine Music Box Waltz, 15 Japanese Voice Lines, and 22-Photo 4K Archive.">
   <meta property="og:image" content="./Navia/1351553.jpeg">
   <meta name="theme-color" content="#e8742a">
 
@@ -15,13 +15,13 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Questrial&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Questrial&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <!-- Modular Stylesheets -->
-  <link rel="stylesheet" href="./css/variables.css?v=4">
-  <link rel="stylesheet" href="./css/layout.css?v=4">
-  <link rel="stylesheet" href="./css/components.css?v=4">
-  <link rel="stylesheet" href="./css/modals.css?v=4">
+  <link rel="stylesheet" href="./css/variables.css?v=5">
+  <link rel="stylesheet" href="./css/layout.css?v=5">
+  <link rel="stylesheet" href="./css/components.css?v=5">
+  <link rel="stylesheet" href="./css/modals.css?v=5">
 
   <!-- Three.js r160 Import Map -->
   <script type="importmap">
@@ -63,39 +63,40 @@
     <!-- z-index 2: Three.js 3-Mode Interactive 3D Stage -->
     <canvas id="fox" aria-label="Interactive 3D Holographic Navia Stage"></canvas>
 
+    <!-- z-index 3: Subtle Art Deco Viewport Golden Border Frame -->
+    <div class="artdeco-frame" aria-hidden="true"></div>
+
     <!-- z-index 4: Golden Geo Sparkle Cursor Trail & Click Crystallize Ripple Canvas -->
     <canvas id="cursorFx" aria-hidden="true"></canvas>
 
-    <!-- z-index 5: Top-Center 3D Stage Mode Switcher & Default Fontaine Music Box -->
-    <div class="stage-switcher" aria-label="3D Stage Mode and Music Box">
-      <button class="stage-mode-btn is-active" data-stage-mode="sovereign">Card</button>
-      <button class="stage-mode-btn" data-stage-mode="carousel">Ring</button>
-      <button class="stage-mode-btn" data-stage-mode="constellation">Stars</button>
-      <div class="stage-divider"></div>
-      <button class="music-btn is-playing" id="btnMusicBox" title="Play or Pause Fontaine Symphonic Music Box (M)">
-        <canvas class="music-viz" id="musicViz" width="32" height="14"></canvas>
-        <span id="musicBoxLabel">La Rose Radieuse</span>
-      </button>
-      <button class="stage-mode-btn" id="btnNextTrack" title="Next Fontaine Soundtrack (N)">Next</button>
-    </div>
-
-    <!-- z-index 5: Headline -->
+    <!-- z-index 5: Authentic Navia / Fontaine Editorial Headline -->
     <h1 class="headline" id="headline">
-      <span>streamlined</span>
-      <span class="u">operations</span>
-      <span>feel</span>
-      <span class="u indent">breezy</span>
+      <span>helm</span>
+      <span class="u">of the</span>
+      <span>radiant</span>
+      <span class="u indent">rose</span>
     </h1>
 
-    <!-- Left Editorial Lore Column -->
+    <!-- z-index 5: Left Editorial Lore Column -->
     <div class="hero-meta">
       <div class="hero-meta__tag">Spina di Rosula / President</div>
       <p class="hero-meta__quote" id="heroQuote">
-        &ldquo;Every commission in the Court of Fontaine handled with golden precision and a fresh box of macarons.&rdquo;
+        &ldquo;The Spina's on the case! I'll take the lead today.&rdquo;
       </p>
     </div>
 
-    <!-- z-index 5: Single-Row Bottom Editorial Horizon Bar -->
+    <!-- z-index 8: Cinematic Japanese Voice Subtitle Banner (CV: Toyosaki Aki) -->
+    <div class="jp-voice-banner" id="jpVoiceBanner" aria-live="polite">
+      <div class="jp-voice-banner__head">
+        <span class="jp-voice-banner__dot"></span>
+        <span id="jpVoiceLabel">CV: Toyosaki Aki / Elemental Skill I</span>
+      </div>
+      <div class="jp-voice-banner__jp" id="jpVoiceText">気を付けなさい！</div>
+      <div class="jp-voice-banner__romaji" id="jpVoiceRomaji">Kiwotsukenasai!</div>
+      <div class="jp-voice-banner__en" id="jpVoiceEn">Watch out!</div>
+    </div>
+
+    <!-- z-index 9: Single-Row Bottom Editorial Horizon Bar -->
     <div class="hud-dock">
       <div class="hud-group">
         <div class="wp-thumbs" id="wpThumbs"></div>
@@ -113,66 +114,66 @@
       </div>
     </div>
 
-    <!-- z-index 6: Menu Backdrop -->
+    <!-- z-index 10: Menu Backdrop -->
     <div class="menu-backdrop" data-close></div>
 
-    <!-- z-index 7: Clip-Path Morphing Menu Panel -->
+    <!-- z-index 11: Clip-Path Morphing Menu Panel -->
     <nav class="menu" id="menu" aria-label="Main menu">
       <ul class="menu__list">
         <li class="menu__item">
-          <a class="menu__link" href="#platform" data-menu-action="wish">
-            <small>01</small>platform <span class="menu__sub">royal wish</span>
-            <img class="menu__thumb" src="./Navia/1346600.jpeg" alt="Platform">
+          <a class="menu__link" href="#wish" data-menu-action="wish">
+            <small>01</small>wish <span class="menu__sub">royal summon</span>
+            <img class="menu__thumb" src="./Navia/1346600.jpeg" alt="Wish">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
-          <a class="menu__link" href="#story" data-menu-action="dossier">
-            <small>02</small>story <span class="menu__sub">jp voice &amp; lore</span>
-            <img class="menu__thumb" src="./Navia/Navia.jpg" alt="Story">
+          <a class="menu__link" href="#chronicle" data-menu-action="dossier">
+            <small>02</small>chronicle <span class="menu__sub">15 jp voices</span>
+            <img class="menu__thumb" src="./Navia/Navia.jpg" alt="Chronicle">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
-          <a class="menu__link" href="#community" data-menu-action="gallery">
-            <small>03</small>community <span class="menu__sub">22 photos</span>
-            <img class="menu__thumb" src="./Navia/1346603.jpeg" alt="Community">
+          <a class="menu__link" href="#archive" data-menu-action="gallery">
+            <small>03</small>archive <span class="menu__sub">22 photos</span>
+            <img class="menu__thumb" src="./Navia/1346603.jpeg" alt="Archive">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
-          <a class="menu__link" href="#billing" data-menu-action="studio">
-            <small>04</small>billing <span class="menu__sub">card studio</span>
-            <img class="menu__thumb" src="./Navia/1344732.jpeg" alt="Card Studio">
+          <a class="menu__link" href="#studio" data-menu-action="studio">
+            <small>04</small>studio <span class="menu__sub">hd card png</span>
+            <img class="menu__thumb" src="./Navia/1344732.jpeg" alt="Studio">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
         <li class="menu__item">
-          <a class="menu__link" href="#connect" data-menu-action="carousel">
-            <small>05</small>connect <span class="menu__sub">3d ring</span>
-            <img class="menu__thumb" src="./Navia/Navia%20icon.jpg" alt="Connect">
+          <a class="menu__link" href="#carousel" data-menu-action="carousel">
+            <small>05</small>carousel <span class="menu__sub">3d ring</span>
+            <img class="menu__thumb" src="./Navia/Navia%20icon.jpg" alt="Carousel">
             <span class="arrow">&rarr;</span>
           </a>
         </li>
       </ul>
 
       <div class="menu__foot">
-        <a class="menu__cta" href="#begin" data-menu-action="wish">begin today <i>&rarr;</i></a>
+        <a class="menu__cta" href="#salute" data-menu-action="salute">crystal salute <i>&rarr;</i></a>
         <div class="menu__social">
-          <a href="#x" data-menu-action="dossier">x</a>
-          <a href="#discord" data-menu-action="salute">discord</a>
-          <a href="#github" data-menu-action="gallery">github</a>
+          <a href="#chronicle" data-menu-action="dossier">voices</a>
+          <a href="#studio" data-menu-action="studio">studio</a>
+          <a href="#archive" data-menu-action="gallery">gallery</a>
         </div>
       </div>
     </nav>
 
-    <!-- z-index 8: Top Nav -->
+    <!-- z-index 12: Top Nav (pointer-events: none wrapper so center bar is 100% clickable) -->
     <header class="nav">
       <nav class="nav__links">
-        <a href="#platform" data-nav-action="wish">platform</a>
+        <a href="#wish" data-nav-action="wish">wish</a>
         <button class="toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle Fontaine Daylight or Poisson Midnight"></button>
-        <a href="#story" data-nav-action="dossier">story</a>
-        <a href="#community" class="hide-sm" data-nav-action="gallery">community</a>
+        <a href="#chronicle" data-nav-action="dossier">chronicle</a>
+        <a href="#archive" class="hide-sm" data-nav-action="gallery">archive</a>
         <a href="#studio" class="hide-sm" data-nav-action="studio">studio</a>
       </nav>
 
@@ -205,7 +206,20 @@
       </div>
     </header>
 
-    <!-- z-index 9: Full 22-Photo Interactive Gallery Drawer -->
+    <!-- z-index 13: Top-Center 3D Stage Mode Switcher & Default Fontaine Music Box -->
+    <div class="stage-switcher" aria-label="3D Stage Mode and Music Box">
+      <button class="stage-mode-btn is-active" data-stage-mode="sovereign">Card</button>
+      <button class="stage-mode-btn" data-stage-mode="carousel">Ring</button>
+      <button class="stage-mode-btn" data-stage-mode="constellation">Stars</button>
+      <div class="stage-divider"></div>
+      <button class="music-btn is-playing" id="btnMusicBox" title="Play or Pause Fontaine Symphonic Music Box (M)">
+        <canvas class="music-viz" id="musicViz" width="32" height="14"></canvas>
+        <span id="musicBoxLabel">La Rose Radieuse</span>
+      </button>
+      <button class="stage-mode-btn" id="btnNextTrack" title="Next Fontaine Soundtrack (N)">Next</button>
+    </div>
+
+    <!-- z-index 20: Full 22-Photo Interactive Gallery Drawer -->
     <section class="drawer-overlay" id="galleryDrawer" aria-label="Navia 22-Photo Royal Archive">
       <div class="drawer-box">
         <header class="drawer-head">
@@ -225,7 +239,7 @@
       </div>
     </section>
 
-    <!-- z-index 9: Interactive 3D Card Studio & HD PNG Exporter -->
+    <!-- z-index 20: Interactive 3D Card Studio & HD PNG Exporter -->
     <section class="drawer-overlay" id="studioDrawer" aria-label="Navia 3D Card Studio and PNG Exporter">
       <div class="drawer-box">
         <header class="drawer-head">
@@ -287,13 +301,13 @@
       </div>
     </section>
 
-    <!-- z-index 9: Character Chronicle, Arsenal & Japanese Voice Dossier Modal -->
+    <!-- z-index 20: Character Chronicle, Arsenal & 15 Studio Japanese Voices Modal -->
     <section class="drawer-overlay" id="dossierDrawer" aria-label="Navia Character Chronicle">
       <div class="drawer-box">
         <header class="drawer-head">
           <div class="drawer-title">
             Navia Caspar / Helm of the Radiant Rose
-            <span>CV: Toyosaki Aki (豊崎愛生)</span>
+            <span>15 Studio JP Voices (CV: Toyosaki Aki)</span>
           </div>
           <button class="drawer-close" id="closeDossier" aria-label="Close chronicle">&times;</button>
         </header>
@@ -336,38 +350,14 @@
               </div>
             </div>
 
-            <div class="voice-list">
-              <div class="voice-card" data-voice="0">
-                <h4>JP Elemental Skill I / Ceremonial Crystalshot</h4>
-                <p>避けられる？ 気を付けなさい！ &ldquo;Can you avoid this? Be careful!&rdquo;</p>
-              </div>
-              <div class="voice-card" data-voice="1">
-                <h4>JP Elemental Skill II / Ceremonial Crystalshot</h4>
-                <p>あと何発でしょー？ 堂々不意打ち！ &ldquo;How many more bullets? Surprise attack!&rdquo;</p>
-              </div>
-              <div class="voice-card" data-voice="2">
-                <h4>JP Elemental Skill III / Ceremonial Crystalshot</h4>
-                <p>これって“傘弾銃”？ やっほ～！ &ldquo;Is this an Umbrella gun? Yahhoo!&rdquo;</p>
-              </div>
-              <div class="voice-card" data-voice="3">
-                <h4>JP Elemental Burst I / Sunlit Sky's Singing Salute</h4>
-                <p>ファイアー！ ま、岩元素なんだけどね &ldquo;Fire! Well, these are only rocks though.&rdquo;</p>
-              </div>
-              <div class="voice-card" data-voice="4">
-                <h4>JP Elemental Burst II / Special Edition Rosecracker</h4>
-                <p>ローズクラッカー！ 『棘薔薇の会』特注版よ &ldquo;Rosecracker! Special edition of the Spina di Rosula!&rdquo;</p>
-              </div>
-              <div class="voice-card" data-voice="5">
-                <h4>JP Elemental Burst III / Artillery Barrage</h4>
-                <p>撃ち続けて～！ うんうん、イイ感じ！ &ldquo;Keep shooting! Yes, that feels great!&rdquo;</p>
-              </div>
-            </div>
+            <!-- Dynamically populated with all 15 clean JP voice lines (Excludes Fallen & Low HP) -->
+            <div class="voice-list" id="voiceListContainer"></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- z-index 11: 5-Star Golden Meteor Wish Summon Experience -->
+    <!-- z-index 25: 5-Star Golden Meteor Wish Summon Experience -->
     <section class="wish-overlay" id="wishOverlay" aria-label="5-Star Golden Meteor Wish Summon">
       <canvas class="wish-meteor-canvas" id="wishMeteorCanvas"></canvas>
       <div class="wish-result" id="wishResultWrap">
@@ -380,7 +370,7 @@
             <div class="wish-single__stars">&#9733; &#9733; &#9733; &#9733; &#9733;</div>
             <h2 class="wish-single__title" id="wishSingleTitle">President of Spina di Rosula</h2>
             <p class="wish-single__quote" id="wishSingleQuote">
-              &ldquo;Let the Golden Rose Cannon sound our salute across the skies of Fontaine!&rdquo;
+              &ldquo;Whoa! What a stroke of good luck!&rdquo;
             </p>
           </div>
         </div>
@@ -396,7 +386,7 @@
       </div>
     </section>
 
-    <!-- z-index 11: Fullscreen Photo Lightbox -->
+    <!-- z-index 25: Fullscreen Photo Lightbox -->
     <div class="lightbox" id="lightbox">
       <img class="lightbox__img" id="lightboxImg" src="./Navia/1351553.jpeg" alt="Navia Fullscreen Preview">
       <div class="lightbox__bar">
@@ -406,24 +396,13 @@
       </div>
     </div>
 
-    <!-- z-index 8: Cinematic Japanese Voice Subtitle Banner (Toyosaki Aki) -->
-    <div class="jp-voice-banner" id="jpVoiceBanner" aria-live="polite">
-      <div class="jp-voice-banner__head">
-        <span class="jp-voice-banner__dot"></span>
-        <span id="jpVoiceLabel">CV: Toyosaki Aki / Ceremonial Crystalshot</span>
-      </div>
-      <div class="jp-voice-banner__jp" id="jpVoiceText">ファイアー！ ま、岩元素なんだけどね</div>
-      <div class="jp-voice-banner__romaji" id="jpVoiceRomaji">Faiaa! Ma, iwa gensou nandakedo ne</div>
-      <div class="jp-voice-banner__en" id="jpVoiceEn">Fire! Well, these are only rocks though.</div>
-    </div>
-
-    <!-- z-index 12: Notification Toast -->
+    <!-- z-index 30: Notification Toast -->
     <div class="toast" id="toast">Crystal Salute</div>
   </main>
 
   <!-- Modular JavaScript Application -->
-  <script src="./js/textures-cache.js?v=4"></script>
-  <script src="./js/jp-voices-cache.js?v=4"></script>
-  <script type="module" src="./js/app.js?v=4"></script>
+  <script src="./js/textures-cache.js?v=5"></script>
+  <script src="./js/jp-voices-cache.js?v=5"></script>
+  <script type="module" src="./js/app.js?v=5"></script>
 </body>
 </html>

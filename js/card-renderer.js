@@ -2,7 +2,7 @@
 // HIGH-DPI SOVEREIGN CARD COMPOSITOR & HD PNG EXPORTER
 // Clean Art Deco Filigree Frame (Zero Checkerboard Obstruction)
 // ==================================================
-import { FOIL_THEMES } from "./catalog.js?v=4";
+import { FOIL_THEMES } from "./catalog.js?v=5";
 
 export function createBaseCardCanvas(themeKey = "geo") {
   const c = document.createElement("canvas");

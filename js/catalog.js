@@ -1,5 +1,5 @@
 // ==================================================
-// NAVIA ROYAL ARCHIVE CATALOG (22 Local Photos & JP Voice Lines)
+// NAVIA ROYAL ARCHIVE CATALOG (22 Local Photos & 15 Clean JP Voices)
 // ==================================================
 
 export const ALL_PHOTOS = [
@@ -29,15 +29,16 @@ export const ALL_PHOTOS = [
 
 export const CARD_DECK = ALL_PHOTOS.slice(8).concat(ALL_PHOTOS.slice(0, 8));
 
+// 100% Authentic Navia & Spina di Rosula Editorial Headlines
 export const HEADLINES = [
-  ["streamlined", "operations", "feel", "breezy"],
+  ["helm", "of the", "radiant", "rose"],
   ["golden", "roses", "command", "fontaine"],
-  ["unyielding", "verdict", "shines", "radiant"],
-  ["timeless", "elegance", "blooms", "forever"],
+  ["unyielding", "verdict", "shines", "eternal"],
+  ["spina", "di rosula", "stands", "resolute"],
   ["sweetest", "macarons", "spark", "delight"],
-  ["sunlit", "horizons", "stand", "resolute"],
-  ["cordial", "alliances", "thrive", "effortless"],
-  ["azure", "memories", "drift", "serene"]
+  ["sunlit", "horizons", "bloom", "forever"],
+  ["poisson", "breezes", "drift", "serene"],
+  ["azure", "memories", "shine", "bright"]
 ];
 
 export const FOIL_THEMES = {
@@ -79,67 +80,158 @@ export const FOIL_THEMES = {
   }
 };
 
-// Pre-extracted Japanese Voice Lines (CV: Toyosaki Aki / 豊崎愛生)
+// 15 Studio-Clean Japanese Voice Lines (CV: Toyosaki Aki / 豊崎愛生)
+// Strictly excludes Low HP, Ally Low HP, Fallen, and Hit Taken lines!
 export const JP_VOICE_LINES = [
   {
     id: 0,
     type: "skill",
     audioFile: "./audio/jp-skill-1.mp3",
-    durSec: 5.7,
-    label: "Ceremonial Crystalshot I",
-    jp: "避けられる？ 気を付けなさい！",
-    romaji: "Yokerareru? Kiwotsukenasai!",
-    en: "Can you avoid this? Be careful!"
+    durSec: 2.5,
+    label: "Elemental Skill I",
+    jp: "気を付けなさい！",
+    romaji: "Kiwotsukenasai!",
+    en: "Watch out!"
   },
   {
     id: 1,
     type: "skill",
     audioFile: "./audio/jp-skill-2.mp3",
-    durSec: 5.7,
-    label: "Ceremonial Crystalshot II",
-    jp: "あと何発でしょー？ 堂々不意打ち！",
-    romaji: "Ato nanpatsu deshou? Doudou fuiuchi!",
-    en: "How many more bullets? Surprise attack!"
+    durSec: 2.6,
+    label: "Elemental Skill II",
+    jp: "堂々不意打ち！",
+    romaji: "Doudou fuiuchi!",
+    en: "Comin' at ya!"
   },
   {
     id: 2,
     type: "skill",
     audioFile: "./audio/jp-skill-3.mp3",
-    durSec: 5.8,
-    label: "Ceremonial Crystalshot III",
-    jp: "これって“傘弾銃”？ やっほ～！",
-    romaji: "Kore tte \"Sandanjuu\"? Yahhoo~!",
-    en: "Is this an Umbrella gun? Yahhoo!"
+    durSec: 2.5,
+    label: "Elemental Skill III",
+    jp: "やっほ～！",
+    romaji: "Yahhoo~!",
+    en: "Hey there!"
   },
   {
     id: 3,
-    type: "burst",
-    audioFile: "./audio/jp-burst-1.mp3",
-    durSec: 5.6,
-    label: "Sunlit Sky's Singing Salute I",
-    jp: "ファイアー！ ま、岩元素なんだけどね",
-    romaji: "Faiaa! Ma, iwa gensou nandakedo ne",
-    en: "Fire! Well, these are only rocks though."
+    type: "skill",
+    audioFile: "./audio/jp-skill-4.mp3",
+    durSec: 2.5,
+    label: "Elemental Skill IV",
+    jp: "避けられる？",
+    romaji: "Yokerareru?",
+    en: "Feelin' lucky?"
   },
   {
     id: 4,
-    type: "burst",
-    audioFile: "./audio/jp-burst-2.mp3",
-    durSec: 5.7,
-    label: "Sunlit Sky's Singing Salute II",
-    jp: "ローズクラッカー！ 『棘薔薇の会』特注版よ",
-    romaji: "Roozukurakkaa! \"Supina di Roosura\" tokuchuuban yo",
-    en: "Rosecracker! Special edition of the Spina di Rosula!"
+    type: "skill",
+    audioFile: "./audio/jp-skill-5.mp3",
+    durSec: 3.0,
+    label: "Elemental Skill V",
+    jp: "あと何発でしょー？",
+    romaji: "Ato nanpatsu deshou?",
+    en: "This one's got your name on it!"
   },
   {
     id: 5,
+    type: "skill",
+    audioFile: "./audio/jp-skill-6.mp3",
+    durSec: 2.7,
+    label: "Elemental Skill VI",
+    jp: "これって…“傘弾銃”？",
+    romaji: "Kore tte... \"Sandanjuu\"?",
+    en: "Umbrella warfare, I guess?"
+  },
+  {
+    id: 6,
+    type: "burst",
+    audioFile: "./audio/jp-burst-1.mp3",
+    durSec: 4.6,
+    label: "Elemental Burst I",
+    jp: "ファイアー！ ま、岩元素なんだけどね",
+    romaji: "Faiaa! Ma, iwa gensou nandakedo ne",
+    en: "Fire! Well, with rocks."
+  },
+  {
+    id: 7,
+    type: "burst",
+    audioFile: "./audio/jp-burst-2.mp3",
+    durSec: 5.3,
+    label: "Elemental Burst II",
+    jp: "ローズクラッカー！ 『棘薔薇の会』特注版よ",
+    romaji: "Roozukurakkaa! \"Supina di Roosura\" tokuchuuban yo",
+    en: "A proper sendoff! From the Spina, with love."
+  },
+  {
+    id: 8,
     type: "burst",
     audioFile: "./audio/jp-burst-3.mp3",
-    durSec: 6.0,
-    label: "Sunlit Sky's Singing Salute III",
+    durSec: 5.3,
+    label: "Elemental Burst III",
     jp: "撃ち続けて～！ うんうん、イイ感じ！",
     romaji: "Uchitsuzukete~! Un un, ii kanji!",
-    en: "Keep shooting! Yes, that feels great!"
+    en: "Attack! Mm-hmm, that's the way."
+  },
+  {
+    id: 9,
+    type: "chest",
+    audioFile: "./audio/jp-chest-1.mp3",
+    durSec: 3.2,
+    label: "Treasure Chest I",
+    jp: "わぁお、ラッキー！",
+    romaji: "Waao, rakkii!",
+    en: "Whoa! What a stroke of good luck!"
+  },
+  {
+    id: 10,
+    type: "chest",
+    audioFile: "./audio/jp-chest-2.mp3",
+    durSec: 3.0,
+    label: "Treasure Chest II",
+    jp: "さ、早くしまって！",
+    romaji: "Sa, hayaku shimatte!",
+    en: "Quick! Let's pack it up!"
+  },
+  {
+    id: 11,
+    type: "chest",
+    audioFile: "./audio/jp-chest-3.mp3",
+    durSec: 3.8,
+    label: "Treasure Chest III",
+    jp: "お宝探し、大成功！",
+    romaji: "Otakara sagashi, daiseikou!",
+    en: "I'm loving this treasure hunt!"
+  },
+  {
+    id: 12,
+    type: "join",
+    audioFile: "./audio/jp-join-1.mp3",
+    durSec: 2.9,
+    label: "Joining Party I",
+    jp: "思い立ったが吉日！",
+    romaji: "Omoitatta ga kichijitsu!",
+    en: "Count me in."
+  },
+  {
+    id: 13,
+    type: "join",
+    audioFile: "./audio/jp-join-2.mp3",
+    durSec: 3.4,
+    label: "Joining Party II",
+    jp: "スピナ・ディ・ロースラの出番よ！",
+    romaji: "Supina di Roosura no deban yo!",
+    en: "The Spina's on the case!"
+  },
+  {
+    id: 14,
+    type: "join",
+    audioFile: "./audio/jp-join-3.mp3",
+    durSec: 3.8,
+    label: "Joining Party III",
+    jp: "今日はあたしが案内してあげる！",
+    romaji: "Kyou wa atashi ga annai shite ageru!",
+    en: "I'll take the lead today!"
   }
 ];
 

@@ -2,7 +2,7 @@
 // GOLDEN GEO CURSOR TRAIL, CLICK CRYSTALLIZE RIPPLE
 // & 5-STAR GOLDEN METEOR WISH SUMMON ANIMATION
 // ==================================================
-import { ALL_PHOTOS, VOICE_QUOTES } from "./catalog.js?v=4";
+import { ALL_PHOTOS, VOICE_QUOTES } from "./catalog.js?v=5";
 
 export function initCursorTrail() {
   const canvas = document.getElementById("cursorFx");

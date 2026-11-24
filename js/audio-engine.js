@@ -4,7 +4,7 @@
 // - Auto-Pause BGM when Navia JP Voice (Toyosaki Aki)
 //   plays on Card / Salute click, then Auto-Resume BGM!
 // ==================================================
-import { JP_VOICE_LINES } from "./catalog.js?v=4";
+import { JP_VOICE_LINES } from "./catalog.js?v=5";
 
 class NaviaAudioEngine {
   constructor() {
@@ -27,8 +27,7 @@ class NaviaAudioEngine {
     this.voiceAudio = new Audio();
     this.voiceAudio.preload = "auto";
     this.voiceStopTimer = null;
-    this.skillClipCursor = 0;
-    this.burstClipCursor = 0;
+    this.cursors = { skill: 0, burst: 0, chest: 0, join: 0 };
     this.onStateChangeCallback = null;
     this.onVoiceSubCallback = null;
 
@@ -172,7 +171,8 @@ class NaviaAudioEngine {
   }
 
   // ==================================================
-  // PLAY NAVIA JAPANESE VOICE LINE (Mutes BGM -> Plays JP Voice -> Resumes BGM)
+  // PLAY NAVIA STUDIO JP VOICE LINE (Mutes BGM -> Plays JP Voice -> Resumes BGM)
+  // Categories: "skill" (6), "burst" (3), "chest" (3), "join" (3), or numeric ID (0..14)
   // ==================================================
   playJpVoice(categoryOrId = "skill") {
     this.init();
@@ -180,14 +180,14 @@ class NaviaAudioEngine {
     let clip = null;
     if (typeof categoryOrId === "number") {
       clip = JP_VOICE_LINES[categoryOrId % JP_VOICE_LINES.length];
-    } else if (categoryOrId === "burst") {
-      const burstClips = JP_VOICE_LINES.filter((v) => v.type === "burst");
-      clip = burstClips[this.burstClipCursor % burstClips.length];
-      this.burstClipCursor++;
     } else {
-      const skillClips = JP_VOICE_LINES.filter((v) => v.type === "skill");
-      clip = skillClips[this.skillClipCursor % skillClips.length];
-      this.skillClipCursor++;
+      const cat = ["skill", "burst", "chest", "join"].includes(categoryOrId)
+        ? categoryOrId
+        : "skill";
+      const pool = JP_VOICE_LINES.filter((v) => v.type === cat);
+      const cur = this.cursors[cat] || 0;
+      clip = pool[cur % pool.length];
+      this.cursors[cat] = cur + 1;
     }
 
     // 1. Immediately mute / pause BGM loop while Navia speaks

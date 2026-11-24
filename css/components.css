@@ -53,25 +53,31 @@
   text-shadow: 0 2px 14px rgba(18, 8, 2, 0.65);
 }
 
-/* Top-Center Editorial Stage & Symphonic Audio Bar */
+/* Top-Center Editorial Stage & Symphonic Audio Bar (z-index 13: ALWAYS clickable!) */
 .stage-switcher {
   position: absolute;
   top: 19px;
   left: 50%;
   transform: translateX(-50%) translateY(14px);
-  z-index: 5;
+  z-index: 13;
+  pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 4px 6px;
   border-radius: 999px;
-  background: rgba(18, 13, 9, 0.62);
-  border: 1px solid rgba(245, 196, 81, 0.28);
+  background: rgba(18, 13, 9, 0.66);
+  border: 1px solid rgba(245, 196, 81, 0.34);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: 0 12px 34px rgba(10, 4, 0, 0.36);
+  box-shadow: 0 12px 34px rgba(10, 4, 0, 0.38);
   opacity: 0;
   animation: riseCenter .9s cubic-bezier(.2,.7,.2,1) .2s forwards;
+}
+
+.hero.is-menu-open .stage-switcher {
+  pointer-events: none;
+  opacity: 0.25;
 }
 
 @keyframes riseCenter {
@@ -152,13 +158,13 @@
   display: block;
 }
 
-/* Single-Row Bottom Editorial Horizon Bar (z-index 5) */
+/* Single-Row Bottom Editorial Horizon Bar (z-index 9) */
 .hud-dock {
   position: absolute;
   left: 20px;
   right: 20px;
   bottom: 16px;
-  z-index: 5;
+  z-index: 9;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -283,13 +289,23 @@
   color: #dbeafe;
 }
 
+/* Subtle Art Deco Viewport Golden Border Frame (pointer-events: none) */
+.artdeco-frame {
+  position: absolute;
+  inset: 10px;
+  z-index: 3;
+  border: 1px solid rgba(245, 196, 81, 0.16);
+  border-radius: 6px;
+  pointer-events: none;
+}
+
 /* Toast Notification */
 .toast {
   position: absolute;
   top: 66px;
   left: 50%;
   transform: translateX(-50%) translateY(-10px);
-  z-index: 12;
+  z-index: 30;
   padding: 6px 16px;
   border-radius: 999px;
   background: rgba(18, 13, 9, 0.88);
