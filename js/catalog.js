@@ -1,5 +1,5 @@
 // ==================================================
-// NAVIA ROYAL ARCHIVE CATALOG (22 Local Photos & Lore)
+// NAVIA ROYAL ARCHIVE CATALOG (22 Local Photos & JP Voice Lines)
 // ==================================================
 
 export const ALL_PHOTOS = [
@@ -79,9 +79,70 @@ export const FOIL_THEMES = {
   }
 };
 
-export const VOICE_QUOTES = [
-  "“A proper lady always carries her parasol... even if mine fires Rosula Shardshots at point-blank range!”",
-  "“On behalf of the Spina di Rosula — let the Golden Rose Cannon sound our salute across the skies of Fontaine!”",
-  "“Work flows so much smoother when everyone has a freshly baked macaron in hand. Melus and Silver already prepared the tea!”",
-  "“No matter how tangled a case in the Court of Fontaine seems, the Spina resolves it before sunset — streamlined and breezy.”"
+// Pre-extracted Japanese Voice Lines (JP VA: Toyosaki Aki / 豊崎愛生)
+export const JP_VOICE_LINES = [
+  {
+    id: 0,
+    type: "skill",
+    audioFile: "./audio/jp-skill-1.mp3",
+    durSec: 5.7,
+    label: "Elemental Skill • Ceremonial Crystalshot I",
+    jp: "「避けられる？ … 気を付けなさい！」",
+    romaji: "Yokerareru? ... Kiwotsukenasai!",
+    en: "Can you avoid this? ... Be careful!"
+  },
+  {
+    id: 1,
+    type: "skill",
+    audioFile: "./audio/jp-skill-2.mp3",
+    durSec: 5.7,
+    label: "Elemental Skill • Ceremonial Crystalshot II",
+    jp: "「あと何発でしょー？ … 堂々不意打ち！」",
+    romaji: "Ato nanpatsu deshou? ... Doudou fuiuchi!",
+    en: "How many more bullets? ... Surprise attack!"
+  },
+  {
+    id: 2,
+    type: "skill",
+    audioFile: "./audio/jp-skill-3.mp3",
+    durSec: 5.8,
+    label: "Elemental Skill • Ceremonial Crystalshot III",
+    jp: "「これって…“傘弾銃”？ … やっほ～！」",
+    romaji: "Kore tte... \"Sandanjuu\"? ... Yahhoo~!",
+    en: "Is this... \"An Umbrella gun\"? ... Yahhoo~!"
+  },
+  {
+    id: 3,
+    type: "burst",
+    audioFile: "./audio/jp-burst-1.mp3",
+    durSec: 5.6,
+    label: "Elemental Burst • Sunlit Sky's Singing Salute I",
+    jp: "「ファイアー！ま、岩元素なんだけどね」",
+    romaji: "Faiaa! Ma, iwa gensou nandakedo ne",
+    en: "Fire! Well, these are only rocks though."
+  },
+  {
+    id: 4,
+    type: "burst",
+    audioFile: "./audio/jp-burst-2.mp3",
+    durSec: 5.7,
+    label: "Elemental Burst • Sunlit Sky's Singing Salute II",
+    jp: "「ローズクラッカー！『棘薔薇の会』特注版よ」",
+    romaji: "Roozukurakkaa! \"Supina di Roosura\" tokuchuuban yo",
+    en: "Rosecracker! This is a special edition, \"The Thorn Rose\"!"
+  },
+  {
+    id: 5,
+    type: "burst",
+    audioFile: "./audio/jp-burst-3.mp3",
+    durSec: 6.0,
+    label: "Elemental Burst • Sunlit Sky's Singing Salute III",
+    jp: "「撃ち続けて～！うんうん、イイ感じ！」",
+    romaji: "Uchitsuzukete~! Un un, ii kanji!",
+    en: "Keep shooting! Yeah, yeah, that's good!"
+  }
 ];
+
+export const VOICE_QUOTES = JP_VOICE_LINES.map(
+  (v) => `${v.jp} (${v.romaji}) — “${v.en}”`
+);

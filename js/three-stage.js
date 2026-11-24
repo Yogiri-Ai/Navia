@@ -6,8 +6,8 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { CARD_DECK, FOIL_THEMES } from "./catalog.js";
-import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js";
+import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=3";
+import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=3";
 
 export function initThreeStage(callbacks = {}) {
   const canvas = document.getElementById("fox");
@@ -594,6 +594,10 @@ export function initThreeStage(callbacks = {}) {
   holder.add(multiCardsGroup);
 
   const multiNodes = [];
+  const pickableMeshes = [];
+  const raycaster = new THREE.Raycaster();
+  const pointerNdc = new THREE.Vector2();
+  let hoveredNodeIdx = -1;
   const NODE_COUNT = 12;
   const miniW = 0.74;
   const miniH = 1.02;
@@ -628,6 +632,8 @@ export function initThreeStage(callbacks = {}) {
     tex.colorSpace = THREE.SRGBColorSpace;
     const mat = new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide });
     const face = new THREE.Mesh(miniPlaneGeo, mat);
+    face.userData = { nodeIndex: i, cardItem: item };
+    pickableMeshes.push(face);
     nodeGroup.add(face);
 
     // Subtle corner star bloom on constellation nodes
@@ -828,18 +834,38 @@ export function initThreeStage(callbacks = {}) {
     saluteFlashLight.color.setHex(isNight ? 0x70b5ff : 0xffdf7a);
   }
 
-  // Canvas drag / click interaction
+  // Canvas drag / click interaction + 3D Raycaster Card Picking
   let pointerDownX = 0;
+  let pointerDownY = 0;
   let isDragging = false;
   canvas.addEventListener("pointerdown", (e) => {
     pointerDownX = e.clientX;
+    pointerDownY = e.clientY;
     isDragging = true;
   });
   window.addEventListener("pointerup", (e) => {
     if (!isDragging) return;
     isDragging = false;
     const dx = e.clientX - pointerDownX;
-    if (Math.abs(dx) < 8) {
+    const dy = e.clientY - pointerDownY;
+    if (Math.hypot(dx, dy) < 10) {
+      // Check if user clicked a 3D Card in Carousel or Constellation mode
+      if (stageMode !== "sovereign") {
+        pointerNdc.x = (e.clientX / window.innerWidth) * 2 - 1;
+        pointerNdc.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointerNdc, camera);
+        const hits = raycaster.intersectObjects(pickableMeshes, false);
+        if (hits.length > 0 && hits[0].object.userData?.cardItem) {
+          const picked = hits[0].object.userData.cardItem;
+          applyCustomCardFromStudio("./Navia/" + picked.file, {
+            title: "N A V I A",
+            subtitle: picked.title,
+            foilTheme: currentFoilTheme
+          });
+          if (callbacks.onPick3DCard) callbacks.onPick3DCard(picked);
+          return;
+        }
+      }
       flipCard();
       if (callbacks.onCardInteract) callbacks.onCardInteract();
     } else if (stageMode === "carousel") {
@@ -860,6 +886,17 @@ export function initThreeStage(callbacks = {}) {
     target.y = (e.clientY / window.innerHeight) * 2 - 1;
     if (isDragging && stageMode === "carousel") {
       carouselSpinTarget += e.movementX * 0.006;
+    }
+    if (stageMode !== "sovereign" && !isDragging) {
+      pointerNdc.x = target.x;
+      pointerNdc.y = -target.y;
+      raycaster.setFromCamera(pointerNdc, camera);
+      const hits = raycaster.intersectObjects(pickableMeshes, false);
+      hoveredNodeIdx = hits.length > 0 ? hits[0].object.userData.nodeIndex : -1;
+      canvas.style.cursor = hoveredNodeIdx >= 0 ? "pointer" : "grab";
+    } else if (!isDragging) {
+      hoveredNodeIdx = -1;
+      canvas.style.cursor = "grab";
     }
   });
 
@@ -990,20 +1027,22 @@ export function initThreeStage(callbacks = {}) {
       if (stageMode !== "sovereign") {
         const ringRadius = 1.85;
         multiNodes.forEach((node, idx) => {
+          const isHovered = idx === hoveredNodeIdx;
+          const hoverBoost = isHovered ? 1.18 : 1.0;
           if (stageMode === "carousel") {
             const angle = node.carouselAngle + carouselSpinCurrent + t * 0.18;
             const tx = Math.sin(angle) * ringRadius;
             const tz = Math.cos(angle) * ringRadius * 0.65;
-            const ty = Math.sin(angle * 2 + t) * 0.12;
-            node.group.position.lerp(new THREE.Vector3(tx, ty, tz), 0.1);
+            const ty = Math.sin(angle * 2 + t) * 0.12 + (isHovered ? 0.08 : 0);
+            node.group.position.lerp(new THREE.Vector3(tx, ty, tz), 0.12);
             node.group.rotation.y = angle;
-            node.group.scale.setScalar(0.82 + (tz + ringRadius * 0.65) * 0.14);
+            node.group.scale.setScalar((0.82 + (tz + ringRadius * 0.65) * 0.14) * hoverBoost);
           } else {
             const cp = node.constPos;
-            const floatY = cp.y + Math.sin(t * 1.8 + idx) * 0.05;
-            node.group.position.lerp(new THREE.Vector3(cp.x, floatY, cp.z), 0.1);
+            const floatY = cp.y + Math.sin(t * 1.8 + idx) * 0.05 + (isHovered ? 0.08 : 0);
+            node.group.position.lerp(new THREE.Vector3(cp.x, floatY, cp.z + (isHovered ? 0.2 : 0)), 0.12);
             node.group.rotation.y = look.x * 0.25 + Math.sin(t + idx) * 0.08;
-            node.group.scale.setScalar(0.68);
+            node.group.scale.setScalar(0.68 * hoverBoost);
           }
         });
       }

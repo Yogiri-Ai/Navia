@@ -1,7 +1,7 @@
 // ==================================================
 // HIGH-DPI SOVEREIGN CARD COMPOSITOR & HD PNG EXPORTER
 // ==================================================
-import { FOIL_THEMES } from "./catalog.js";
+import { FOIL_THEMES } from "./catalog.js?v=3";
 
 export function createBaseCardCanvas(themeKey = "geo") {
   const c = document.createElement("canvas");

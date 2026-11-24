@@ -556,6 +556,189 @@
   justify-content: center;
 }
 
+/* 5. 5-STAR GOLDEN METEOR WISH SUMMON OVERLAY */
+.wish-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  background: #070510;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0s 0.4s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.wish-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0s;
+}
+
+.wish-meteor-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.wish-result {
+  position: relative;
+  z-index: 2;
+  width: min(1100px, 94vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  transform: scale(0.88) translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.55s ease, transform 0.65s cubic-bezier(.2,.8,.2,1);
+}
+
+.wish-result.is-revealed {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.wish-single {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: rgba(24, 18, 14, 0.85);
+  border: 1px solid rgba(247, 198, 84, 0.55);
+  border-radius: 28px;
+  padding: 26px 32px;
+  box-shadow: 0 0 80px rgba(245, 196, 81, 0.35), 0 28px 80px rgba(0, 0, 0, 0.8);
+  max-width: 780px;
+}
+
+.wish-single__art {
+  width: 240px;
+  aspect-ratio: 3 / 4.2;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 32px rgba(245, 196, 81, 0.45);
+  flex-shrink: 0;
+}
+
+.wish-single__art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wish-single__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wish-single__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(245, 196, 81, 0.2);
+  border: 1px solid var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.wish-single__stars {
+  font-size: 26px;
+  letter-spacing: 0.18em;
+  color: #ffd859;
+  text-shadow: 0 0 18px rgba(255, 216, 89, 0.85);
+}
+
+.wish-single__title {
+  font-family: "Questrial", sans-serif;
+  font-size: 32px;
+  color: var(--white);
+}
+
+.wish-single__quote {
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.wish-multi-grid {
+  display: none;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-height: 68vh;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.wish-multi-card {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4.2;
+  border: 1.5px solid var(--gold);
+  background: #140f0c;
+  box-shadow: 0 0 24px rgba(245, 196, 81, 0.32);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wish-multi-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 0 36px rgba(245, 196, 81, 0.75);
+}
+
+.wish-multi-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.wish-multi-card__stars {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 12px;
+  color: #ffd859;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+}
+
+.wish-multi-card__name {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 10px 8px;
+  background: linear-gradient(180deg, transparent, rgba(12, 8, 4, 0.92));
+  font-family: "Questrial", sans-serif;
+  font-size: 12.5px;
+  color: var(--white);
+  text-align: center;
+}
+
+.wish-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 @media (max-width: 960px) {
   .studio-body,
   .dossier-body {

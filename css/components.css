@@ -2,6 +2,16 @@
    HERO META, 3D MODE SWITCHER, MUSIC BOX & HUD DOCK
    ================================================== */
 
+/* z-index 4: Golden Cursor Sparkle & Click Ripple Canvas */
+#cursorFx {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 /* Left Lore & Quote Card */
 .hero-meta {
   position: absolute;
@@ -264,6 +274,44 @@
   color: var(--ink);
 }
 
+.hud-btn--wish {
+  background: linear-gradient(135deg, #f59e0b, #ec4899, #8b5cf6);
+  border-color: var(--gold-bright);
+  color: var(--white);
+  box-shadow: 0 0 14px rgba(245, 196, 81, 0.45);
+}
+
+.hud-btn--wish:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.hud-btn.is-cinema-on {
+  background: rgba(59, 130, 246, 0.38);
+  border-color: #93c5fd;
+  color: #dbeafe;
+  animation: pulseGlow 2.4s infinite ease-in-out;
+}
+
+.shortcut-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.shortcut-hint kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-family: "Urbanist", sans-serif;
+  font-size: 10px;
+  color: var(--gold-bright);
+  margin: 0 2px;
+}
+
 .hud-label {
   font-size: 10.5px;
   letter-spacing: 0.1em;
@@ -296,6 +344,87 @@
 .toast.is-visible {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* Cinematic Japanese Voice Line Subtitle Banner (Toyosaki Aki) */
+.jp-voice-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 124px;
+  transform: translateX(-50%) translateY(18px) scale(0.96);
+  z-index: 8;
+  min-width: min(520px, 92vw);
+  max-width: 92vw;
+  padding: 14px 24px;
+  border-radius: 22px;
+  background: rgba(18, 12, 8, 0.88);
+  border: 1.5px solid var(--gold);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65), 0 0 28px rgba(245, 196, 81, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.32s ease,
+    transform 0.38s cubic-bezier(.2,.8,.2,1),
+    visibility 0s 0.38s;
+}
+
+.jp-voice-banner.is-speaking {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) scale(1);
+  transition:
+    opacity 0.32s ease,
+    transform 0.38s cubic-bezier(.2,.8,.2,1),
+    visibility 0s;
+}
+
+.jp-voice-banner__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.jp-voice-banner__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffd859;
+  box-shadow: 0 0 10px #ffd859;
+  animation: pulseGlow 1s infinite ease-in-out;
+}
+
+.jp-voice-banner__jp {
+  font-family: "Questrial", "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 14px rgba(245, 196, 81, 0.45);
+}
+
+.jp-voice-banner__romaji {
+  font-family: "Questrial", sans-serif;
+  font-size: 13.5px;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+.jp-voice-banner__en {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.78);
+  font-style: italic;
 }
 
 @media (max-width: 1024px) {

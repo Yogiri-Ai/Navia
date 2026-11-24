@@ -1,11 +1,13 @@
 // ==================================================
-// MAIN UI CONTROLLER (Clip-Path Menu, 4K Scene Dock,
-// 3D Stage Switcher, Music Box, Card Studio & 22-Photo Archive)
+// MAIN UI CONTROLLER (Default Multi-Track Music Box,
+// 3-Mode 3D Stage with Raycaster, 5-Star Wish Summon,
+// Golden Cursor Trail, Auto-Cinema & 22-Photo Archive)
 // ==================================================
-import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, VOICE_QUOTES } from "./catalog.js";
-import { audioEngine } from "./audio-engine.js";
-import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js";
-import { initThreeStage } from "./three-stage.js";
+import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, VOICE_QUOTES } from "./catalog.js?v=3";
+import { audioEngine } from "./audio-engine.js?v=3";
+import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=3";
+import { initThreeStage } from "./three-stage.js?v=3";
+import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=3";
 
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.getElementById("hero");
@@ -16,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const menuLinks = Array.from(menu.querySelectorAll("a"));
   const toastEl = document.getElementById("toast");
   const musicVizCanvas = document.getElementById("musicViz");
+  const musicBtn = document.getElementById("btnMusicBox");
+  const musicLabel = document.getElementById("musicBoxLabel");
   let toastTimer = null;
 
   function showToast(msg) {
@@ -25,13 +29,54 @@ document.addEventListener("DOMContentLoaded", () => {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       toastEl.classList.remove("is-visible");
-    }, 2500);
+    }, 2600);
   }
 
-  // Initialize Three.js 3-Mode Stage
+  // Initialize Golden Geo Cursor Sparkle Trail & Click Ripples
+  initCursorTrail();
+
+  // Start Default Multi-Track Fontaine Symphonic Music Box ON by default!
+  // Plus handle Japanese Voice Line Subtitle Banner (pauses BGM -> shows JP sub -> resumes BGM)
+  const jpVoiceBanner = document.getElementById("jpVoiceBanner");
+  const jpVoiceLabel = document.getElementById("jpVoiceLabel");
+  const jpVoiceText = document.getElementById("jpVoiceText");
+  const jpVoiceRomaji = document.getElementById("jpVoiceRomaji");
+  const jpVoiceEn = document.getElementById("jpVoiceEn");
+
+  audioEngine.startDefaultBgm(
+    (isPlaying, trackTitle, isVoiceSpeaking) => {
+      musicBtn.classList.toggle("is-playing", isPlaying || isVoiceSpeaking);
+      musicLabel.textContent = isVoiceSpeaking
+        ? trackTitle
+        : isPlaying
+        ? trackTitle
+        : "Music Paused";
+    },
+    (clip, isSpeaking) => {
+      if (!jpVoiceBanner || !clip) return;
+      if (isSpeaking) {
+        jpVoiceLabel.textContent = `JP VA • Toyosaki Aki (豊崎愛生) • ${clip.label}`;
+        jpVoiceText.textContent = clip.jp;
+        jpVoiceRomaji.textContent = clip.romaji;
+        jpVoiceEn.textContent = `“${clip.en}”`;
+        document.getElementById("heroQuote").textContent = `${clip.jp} (${clip.romaji}) — “${clip.en}”`;
+        jpVoiceBanner.classList.add("is-speaking");
+      } else {
+        jpVoiceBanner.classList.remove("is-speaking");
+      }
+    }
+  );
+
+  // Initialize Three.js 3-Mode Stage with Raycaster Picking
+  // Clicking the 3D Card mutes BGM, plays Navia's JP Elemental Skill voice, then resumes BGM!
   const stage = initThreeStage({
     onCardInteract: () => {
-      audioEngine.playChime(622.25);
+      audioEngine.playJpVoice("skill");
+    },
+    onPick3DCard: (pickedItem) => {
+      audioEngine.playJpVoice("skill");
+      setStageModeUI("sovereign", true);
+      showToast("3D Card Focused: " + pickedItem.title);
     },
     onFrame: () => {
       audioEngine.drawVisualizer(musicVizCanvas);
@@ -77,14 +122,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ==================================================
-  // 2. 3D STAGE MODE SWITCHER & FONTAINE MUSIC BOX
+  // 2. 3D STAGE MODE SWITCHER & FONTAINE MULTI-TRACK MUSIC BOX
   // ==================================================
   const modeButtons = Array.from(document.querySelectorAll("[data-stage-mode]"));
-  function setStageModeUI(mode) {
+  function setStageModeUI(mode, skipStageCall = false) {
     modeButtons.forEach((btn) => {
       btn.classList.toggle("is-active", btn.getAttribute("data-stage-mode") === mode);
     });
-    stage.setStageMode(mode);
+    if (!skipStageCall) stage.setStageMode(mode);
   }
 
   modeButtons.forEach((btn) => {
@@ -94,27 +139,35 @@ document.addEventListener("DOMContentLoaded", () => {
       setStageModeUI(mode);
       const labelMap = {
         sovereign: "3D Stage: Sovereign Card & Golden Parasol Halo",
-        carousel: "3D Stage: 360° Carousel Ring (Drag to Spin)",
-        constellation: "3D Stage: Rosa Multiflora Photo Constellation"
+        carousel: "3D Stage: 360° Carousel Ring (Click Any Card to Focus)",
+        constellation: "3D Stage: Rosa Multiflora Constellation (Click Any Star Card)"
       };
       showToast(labelMap[mode] || "3D Stage Updated");
     });
   });
 
-  const musicBtn = document.getElementById("btnMusicBox");
-  const musicLabel = document.getElementById("musicBoxLabel");
   musicBtn.addEventListener("click", () => {
     const playing = audioEngine.toggleMusicBox();
+    const title = audioEngine.getCurrentTrackTitle();
     musicBtn.classList.toggle("is-playing", playing);
-    musicLabel.textContent = playing ? "Waltz Playing" : "Music Box";
-    showToast(playing ? "♫ Fontaine Music Box: Spina di Rosula Waltz" : "Music Box Paused");
+    musicLabel.textContent = playing ? title : "Music Paused";
+    showToast(playing ? `♫ Playing: ${title}` : "Fontaine Music Box Paused");
+  });
+
+  document.getElementById("btnNextTrack").addEventListener("click", () => {
+    const title = audioEngine.nextTrack();
+    musicBtn.classList.add("is-playing");
+    musicLabel.textContent = title;
+    audioEngine.playChime(783.99);
+    showToast(`♫ Switched Track: ${title}`);
   });
 
   // ==================================================
-  // 3. 4K WALLPAPER CROSSFADER & THEME TOGGLE
+  // 3. 4K WALLPAPER CROSSFADER, AUTO-CINEMA & THEME TOGGLE
   // ==================================================
   const bgLayers = Array.from(document.querySelectorAll(".hero__bg-layer"));
   const wpThumbsContainer = document.getElementById("wpThumbs");
+  const btnNextCard = document.getElementById("btnNextCard");
   let currentWpIdx = 0;
 
   function setWallpaper(idx) {
@@ -153,6 +206,39 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast("4K Scene: " + ALL_PHOTOS[currentWpIdx].title);
   });
 
+  // Auto-Cinema Exhibition Mode
+  const btnAutoCinema = document.getElementById("btnAutoCinema");
+  let cinemaTimer = null;
+  let cinemaStep = 0;
+
+  function toggleAutoCinema() {
+    if (cinemaTimer) {
+      clearInterval(cinemaTimer);
+      cinemaTimer = null;
+      btnAutoCinema.classList.remove("is-cinema-on");
+      btnAutoCinema.innerHTML = "Auto-Cinema &#9654;";
+      showToast("Auto-Cinema Exhibition Paused");
+    } else {
+      btnAutoCinema.classList.add("is-cinema-on");
+      btnAutoCinema.innerHTML = "Cinema Active &#9632;";
+      audioEngine.playSaluteCannon();
+      stage.triggerCrystalSalute();
+      showToast("✦ Auto-Cinema 4K Exhibition Mode Active");
+      cinemaTimer = setInterval(() => {
+        cinemaStep++;
+        setWallpaper(currentWpIdx + 1);
+        const info = stage.cycleCard();
+        btnNextCard.innerHTML = `Card Art (${info.index + 1}/${info.total}) &rarr;`;
+        if (cinemaStep % 3 === 0) {
+          const modes = ["sovereign", "carousel", "constellation"];
+          setStageModeUI(modes[(cinemaStep / 3) % modes.length]);
+        }
+      }, 4200);
+    }
+  }
+
+  btnAutoCinema.addEventListener("click", toggleAutoCinema);
+
   document.getElementById("themeToggle").addEventListener("click", () => {
     const isNight = hero.classList.toggle("is-night");
     audioEngine.playChime(isNight ? 440 : 740);
@@ -162,20 +248,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Bottom HUD 3D Controls
   document.getElementById("btnSalute").addEventListener("click", () => {
-    audioEngine.playSaluteCannon();
+    audioEngine.playJpVoice("burst");
     stage.triggerCrystalSalute();
-    showToast("Golden Rose Cannon: Crystal Salute!");
+    showToast("Golden Rose Cannon: Crystal Salute! (JP Voice)");
   });
 
   document.getElementById("btnFlipCard").addEventListener("click", () => {
-    audioEngine.playChime(622.25);
+    audioEngine.playJpVoice("skill");
     stage.flipCard();
-    showToast("3D Hologram Stage Rotated");
+    showToast("3D Hologram Card Flipped (JP Voice)");
   });
 
-  const btnNextCard = document.getElementById("btnNextCard");
   btnNextCard.addEventListener("click", () => {
-    audioEngine.playChime(698.46);
+    audioEngine.playJpVoice("skill");
     const info = stage.cycleCard();
     btnNextCard.innerHTML = `Card Art (${info.index + 1}/${info.total}) &rarr;`;
     showToast("3D Card: " + info.item.title);
@@ -213,7 +298,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Populate 22 photos in Card Studio Picker
   ALL_PHOTOS.forEach((item, idx) => {
     const btn = document.createElement("button");
     btn.className = "studio-photo-pick" + (item.file === studioState.photoFile ? " is-active" : "");
@@ -228,7 +312,6 @@ document.addEventListener("DOMContentLoaded", () => {
     studioPhotoStrip.appendChild(btn);
   });
 
-  // Foil Theme Chips
   foilOptionsEl.addEventListener("click", (e) => {
     const chip = e.target.closest("[data-foil]");
     if (!chip) return;
@@ -269,7 +352,30 @@ document.addEventListener("DOMContentLoaded", () => {
   updateStudioPreview();
 
   // ==================================================
-  // 5. 22-PHOTO ROYAL ARCHIVE, DOSSIER & LIGHTBOX
+  // 5. 5-STAR GOLDEN METEOR WISH SUMMON SYSTEM
+  // ==================================================
+  const wishSystem = initWishSummonSystem({
+    onWishSound: () => {
+      audioEngine.playWishFanfare();
+    },
+    onEquipCard: (photoItem) => {
+      audioEngine.playSaluteCannon();
+      setStageModeUI("sovereign");
+      stage.applyCustomCardFromStudio("./Navia/" + photoItem.file, {
+        title: "N A V I A",
+        subtitle: photoItem.title,
+        foilTheme: "prismatic"
+      });
+      showToast("5★ Sovereign Equipped: " + photoItem.title);
+    }
+  });
+
+  document.getElementById("btnOpenWish").addEventListener("click", () => {
+    wishSystem.openWish(1);
+  });
+
+  // ==================================================
+  // 6. 22-PHOTO ROYAL ARCHIVE, DOSSIER & LIGHTBOX
   // ==================================================
   const galleryDrawer = document.getElementById("galleryDrawer");
   const dossierDrawer = document.getElementById("dossierDrawer");
@@ -283,6 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dossierDrawer.classList.remove("is-open");
     studioDrawer.classList.remove("is-open");
     lightbox.classList.remove("is-open");
+    if (wishSystem.closeWish) wishSystem.closeWish();
   }
 
   function renderGallery(filter) {
@@ -365,6 +472,8 @@ document.addEventListener("DOMContentLoaded", () => {
       updateStudioPreview();
       studioDrawer.classList.add("is-open");
       audioEngine.playChime(740);
+    } else if (action === "wish") {
+      wishSystem.openWish(1);
     } else if (action === "salute") {
       audioEngine.playSaluteCannon();
       stage.triggerCrystalSalute();
@@ -400,10 +509,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".voice-card").forEach((vc) => {
     vc.addEventListener("click", () => {
       const idx = Number(vc.getAttribute("data-voice")) || 0;
-      document.getElementById("heroQuote").textContent = VOICE_QUOTES[idx];
-      audioEngine.playSaluteCannon();
+      audioEngine.playJpVoice(idx);
       stage.triggerCrystalSalute();
-      showToast("Voice Line Selected & Geo Resonance Active");
+      showToast("Playing Navia JP Voice Line #" + (idx + 1));
     });
   });
 
@@ -432,10 +540,45 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast("3D Hologram Card: " + activeLightboxPhoto.title);
   });
 
+  // ==================================================
+  // 7. GLOBAL KEYBOARD SHORTCUTS
+  // ==================================================
   window.addEventListener("keydown", (e) => {
+    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
+      if (e.key === "Escape") e.target.blur();
+      return;
+    }
     if (e.key === "Escape") {
       toggleMenu(false);
       closeAllDrawers();
+    } else if (e.code === "Space") {
+      e.preventDefault();
+      document.getElementById("btnSalute").click();
+    } else if (e.key === "f" || e.key === "F") {
+      document.getElementById("btnFlipCard").click();
+    } else if (e.key === "m" || e.key === "M") {
+      musicBtn.click();
+    } else if (e.key === "n" || e.key === "N") {
+      document.getElementById("btnNextTrack").click();
+    } else if (e.key === "w" || e.key === "W") {
+      wishSystem.openWish(1);
+    } else if (e.key === "c" || e.key === "C") {
+      toggleAutoCinema();
+    } else if (e.key === "1") {
+      setStageModeUI("sovereign");
+      showToast("3D Stage: Sovereign Card");
+    } else if (e.key === "2") {
+      setStageModeUI("carousel");
+      showToast("3D Stage: 360° Carousel Ring");
+    } else if (e.key === "3") {
+      setStageModeUI("constellation");
+      showToast("3D Stage: Rosa Constellation");
+    } else if (e.key === "ArrowRight") {
+      setWallpaper(currentWpIdx + 1);
+      showToast("4K Scene: " + ALL_PHOTOS[currentWpIdx].title);
+    } else if (e.key === "ArrowLeft") {
+      setWallpaper(currentWpIdx - 1);
+      showToast("4K Scene: " + ALL_PHOTOS[currentWpIdx].title);
     }
   });
 });
