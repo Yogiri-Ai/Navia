@@ -1,9 +1,7 @@
 // ==================================================
 // THREE.JS r160 3-MODE INTERACTIVE 3D NAVIA STAGE
-// Modes:
-//   1. "sovereign"     — Holographic Sovereign Card + 3D Golden Parasol Halo
-//   2. "carousel"      — 360° 3D Carousel Ring of 12 Navia Cards
-//   3. "constellation" — 3D Rosa Multiflora Floating Photo Constellation
+// With Volumetric Unreal Bloom Auras, GLSL Godray Corona,
+// and 3D Crystal Salute Shockwave + 11-Pellet Rosula Barrage
 // ==================================================
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -21,7 +19,7 @@ export function initThreeStage(callbacks = {}) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.06;
+  renderer.toneMappingExposure = 1.12;
 
   const scene = new THREE.Scene();
   const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -35,21 +33,25 @@ export function initThreeStage(callbacks = {}) {
   );
   camera.position.set(0, 0, 6);
 
-  // Spec Warm Lights + Sapphire Accent
+  // Spec Warm Lights + Sapphire Accent + Dynamic Crystal Salute Flash Light
   const hemiLight = new THREE.HemisphereLight(0xffe2c0, 0x6b3a12, 1.15);
   scene.add(hemiLight);
 
-  const keyLight = new THREE.DirectionalLight(0xffc98a, 2.25);
+  const keyLight = new THREE.DirectionalLight(0xffc98a, 2.3);
   keyLight.position.set(-3, 4, 3);
   scene.add(keyLight);
 
-  const rimLight = new THREE.DirectionalLight(0xffa24d, 1.65);
+  const rimLight = new THREE.DirectionalLight(0xffa24d, 1.75);
   rimLight.position.set(3, 2, -3);
   scene.add(rimLight);
 
-  const sapphireLight = new THREE.PointLight(0x4ea8ff, 1.9, 9);
+  const sapphireLight = new THREE.PointLight(0x4ea8ff, 2.1, 9);
   sapphireLight.position.set(1.6, -1.1, 2.2);
   scene.add(sapphireLight);
+
+  const saluteFlashLight = new THREE.PointLight(0xffdf7a, 0, 12);
+  saluteFlashLight.position.set(0, 0.2, 1.8);
+  scene.add(saluteFlashLight);
 
   // Keep GLTFLoader referenced per spec
   const gltfLoader = new GLTFLoader();
@@ -62,12 +64,59 @@ export function initThreeStage(callbacks = {}) {
   const holder = new THREE.Group();
   pivot.add(holder);
 
-  // Shared PBR Materials
+  // ==================================================
+  // VOLUMETRIC BLOOM HALO TEXTURE GENERATOR
+  // ==================================================
+  function createBloomTexture(innerRgba, midRgba, outerRgba) {
+    const c = document.createElement("canvas");
+    c.width = 128;
+    c.height = 128;
+    const ctx = c.getContext("2d");
+    const grad = ctx.createRadialGradient(64, 64, 2, 64, 64, 62);
+    grad.addColorStop(0.0, innerRgba);
+    grad.addColorStop(0.32, midRgba);
+    grad.addColorStop(0.7, outerRgba);
+    grad.addColorStop(1.0, "rgba(0,0,0,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+
+  const goldBloomTex = createBloomTexture(
+    "rgba(255, 250, 220, 1.0)",
+    "rgba(255, 196, 75, 0.65)",
+    "rgba(232, 116, 42, 0.18)"
+  );
+
+  const sapphireBloomTex = createBloomTexture(
+    "rgba(225, 242, 255, 1.0)",
+    "rgba(78, 168, 255, 0.65)",
+    "rgba(37, 99, 235, 0.18)"
+  );
+
+  function createBloomSprite(isSapphire, scaleVal) {
+    const mat = new THREE.SpriteMaterial({
+      map: isSapphire ? sapphireBloomTex : goldBloomTex,
+      transparent: true,
+      opacity: 0.78,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+    const sp = new THREE.Sprite(mat);
+    sp.scale.setScalar(scaleVal);
+    return sp;
+  }
+
+  // Shared PBR Materials with Bloom Emissive Boost
   const goldMat = new THREE.MeshStandardMaterial({
     color: 0xf7c654,
+    emissive: 0x5c3606,
+    emissiveIntensity: 0.25,
     metalness: 0.92,
-    roughness: 0.16,
-    envMapIntensity: 1.25
+    roughness: 0.15,
+    envMapIntensity: 1.35
   });
 
   const obsidianMat = new THREE.MeshStandardMaterial({
@@ -78,25 +127,25 @@ export function initThreeStage(callbacks = {}) {
   });
 
   const sapphireMat = new THREE.MeshPhysicalMaterial({
-    color: 0x2d7ef7,
-    emissive: 0x0d2b66,
-    emissiveIntensity: 0.48,
+    color: 0x3b8aff,
+    emissive: 0x1648b8,
+    emissiveIntensity: 0.75,
     metalness: 0.15,
     roughness: 0.08,
     transmission: 0.72,
     thickness: 0.6,
-    envMapIntensity: 1.4
+    envMapIntensity: 1.5
   });
 
   const geoCrystalMat = new THREE.MeshPhysicalMaterial({
-    color: 0xffb830,
-    emissive: 0xd46b08,
-    emissiveIntensity: 0.45,
-    metalness: 0.25,
-    roughness: 0.1,
+    color: 0xffc238,
+    emissive: 0xe87418,
+    emissiveIntensity: 0.72,
+    metalness: 0.22,
+    roughness: 0.08,
     transmission: 0.65,
     thickness: 0.5,
-    envMapIntensity: 1.3
+    envMapIntensity: 1.45
   });
 
   function makeRoundedRect(w, h, r) {
@@ -114,6 +163,185 @@ export function initThreeStage(callbacks = {}) {
     s.quadraticCurveTo(x, y, x + r, y);
     return s;
   }
+
+  // ==================================================
+  // VOLUMETRIC GLSL GODRAY & BLOOM CORONA BACKLIGHT
+  // ==================================================
+  const godrayUniforms = {
+    uTime: { value: 0 },
+    uBurst: { value: 0 },
+    uNight: { value: 0 }
+  };
+
+  const godrayMat = new THREE.ShaderMaterial({
+    uniforms: godrayUniforms,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      uniform float uBurst;
+      uniform float uNight;
+      varying vec2 vUv;
+
+      void main() {
+        vec2 p = vUv * 2.0 - 1.0;
+        float r = length(p);
+        if (r > 1.0) discard;
+
+        float angle = atan(p.y, p.x);
+        // 12 Spina di Rosula sunbeams rotating gently
+        float rays1 = pow(0.5 + 0.5 * cos(angle * 12.0 - uTime * 0.45), 3.0);
+        float rays2 = pow(0.5 + 0.5 * cos(angle * 6.0 + uTime * 0.3), 2.0);
+        float radialFalloff = smoothstep(1.0, 0.08, r);
+        float coreGlow = exp(-r * r * 4.2);
+
+        vec3 dayCol = mix(vec3(0.95, 0.52, 0.15), vec3(1.0, 0.88, 0.48), coreGlow);
+        vec3 nightCol = mix(vec3(0.18, 0.48, 0.96), vec3(0.65, 0.88, 1.0), coreGlow);
+        vec3 col = mix(dayCol, nightCol, uNight);
+
+        float alpha = (coreGlow * 0.42 + (rays1 * 0.18 + rays2 * 0.12) * radialFalloff) * (1.0 + uBurst * 1.45);
+        alpha *= smoothstep(1.0, 0.62, r);
+
+        gl_FragColor = vec4(col, clamp(alpha, 0.0, 0.92));
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+
+  const godrayBacklight = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 3.4), godrayMat);
+  godrayBacklight.position.set(0, 0.04, -0.36);
+  holder.add(godrayBacklight);
+
+  // ==================================================
+  // 3D CRYSTAL SALUTE SHOCKWAVE & 11-PELLET ROSULA BARRAGE
+  // ==================================================
+  const shockwaveGroup = new THREE.Group();
+  holder.add(shockwaveGroup);
+
+  const shockwaveUniforms = {
+    uProgress: { value: 1.0 },
+    uNight: { value: 0.0 }
+  };
+
+  const shockwaveShaderMat = new THREE.ShaderMaterial({
+    uniforms: shockwaveUniforms,
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uProgress;
+      uniform float uNight;
+      varying vec2 vUv;
+
+      void main() {
+        if (uProgress >= 0.99) discard;
+        vec2 p = vUv * 2.0 - 1.0;
+        float r = length(p);
+        if (r > 1.0) discard;
+
+        float angle = atan(p.y, p.x);
+        // Expanding golden rose runic wave ring
+        float ringRadius = uProgress * 0.92;
+        float distToRing = abs(r - ringRadius);
+        float mainRing = exp(-distToRing * distToRing * 260.0);
+
+        // Secondary inner harmonic ring
+        float innerDist = abs(r - ringRadius * 0.68);
+        float innerRing = exp(-innerDist * innerDist * 420.0) * 0.65;
+
+        // 12-point compass rose star modulation along the ring
+        float rosePattern = 0.65 + 0.35 * cos(angle * 12.0);
+        float fade = pow(1.0 - uProgress, 1.35);
+
+        vec3 goldWave = mix(vec3(1.0, 0.72, 0.22), vec3(1.0, 0.96, 0.78), mainRing);
+        vec3 blueWave = mix(vec3(0.25, 0.62, 1.0), vec3(0.82, 0.94, 1.0), mainRing);
+        vec3 col = mix(goldWave, blueWave, uNight);
+
+        float alpha = (mainRing * rosePattern + innerRing) * fade * 1.35;
+        gl_FragColor = vec4(col, clamp(alpha, 0.0, 1.0));
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending
+  });
+
+  // Main frontal shockwave plane & tilted orbital shockwave plane
+  const shockPlaneGeo = new THREE.PlaneGeometry(4.6, 4.6);
+  const shockwaveMain = new THREE.Mesh(shockPlaneGeo, shockwaveShaderMat);
+  shockwaveMain.position.z = 0.08;
+  shockwaveGroup.add(shockwaveMain);
+
+  const shockwaveOrbital = new THREE.Mesh(shockPlaneGeo, shockwaveShaderMat);
+  shockwaveOrbital.rotation.x = Math.PI * 0.36;
+  shockwaveOrbital.rotation.y = Math.PI * 0.12;
+  shockwaveGroup.add(shockwaveOrbital);
+
+  // 11 Rosula Shardshot Artillery Laser Streaks (Navia's 11-pellet Gunbrella blast)
+  const shardBeams = [];
+  const beamGeo = new THREE.CylinderGeometry(0.004, 0.024, 0.65, 8);
+  const beamMat = new THREE.MeshBasicMaterial({
+    color: 0xffe494,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+
+  for (let i = 0; i < 11; i++) {
+    const angle = (i / 11) * Math.PI * 2 + 0.15;
+    const beam = new THREE.Mesh(beamGeo, beamMat);
+    beam.rotation.z = angle - Math.PI / 2;
+    shockwaveGroup.add(beam);
+    shardBeams.push({
+      mesh: beam,
+      angle,
+      speed: 2.4 + (i % 3) * 0.45,
+      zOffset: ((i % 3) - 1) * 0.18
+    });
+  }
+
+  // 36 Explosive Crystallize Burst Sparks
+  const sparkCount = 36;
+  const sparkGeo = new THREE.BufferGeometry();
+  const sparkPositions = new Float32Array(sparkCount * 3);
+  const sparkVelocities = [];
+  for (let i = 0; i < sparkCount; i++) {
+    sparkPositions[i * 3] = 0;
+    sparkPositions[i * 3 + 1] = 0;
+    sparkPositions[i * 3 + 2] = 0;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = (Math.random() - 0.5) * Math.PI;
+    const spd = 1.4 + Math.random() * 2.2;
+    sparkVelocities.push({
+      vx: Math.cos(theta) * Math.cos(phi) * spd,
+      vy: Math.sin(theta) * Math.cos(phi) * spd,
+      vz: Math.sin(phi) * spd
+    });
+  }
+  sparkGeo.setAttribute("position", new THREE.BufferAttribute(sparkPositions, 3));
+  const sparkMat = new THREE.PointsMaterial({
+    size: 0.22,
+    map: goldBloomTex,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+  const burstSparkSystem = new THREE.Points(sparkGeo, sparkMat);
+  shockwaveGroup.add(burstSparkSystem);
 
   // ==================================================
   // MODE 1 GROUP: SOVEREIGN HOLOGRAPHIC CARD + 3D PARASOL HALO
@@ -176,20 +404,17 @@ export function initThreeStage(callbacks = {}) {
     uniform vec2 uTilt;
     uniform float uNight;
     uniform float uFoilMode;
+    uniform float uBurst;
     varying vec2 vUv;
 
     vec3 palette(float t, float mode) {
       if (mode < 0.5) {
-        // Radiant Geo Gold
         return 0.55 + 0.45 * cos(6.28318 * (t + vec3(0.0, 0.15, 0.45)));
       } else if (mode < 1.5) {
-        // Court Azure Sapphire
         return 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.55, 0.65, 0.85)));
       } else if (mode < 2.5) {
-        // Rosula Crimson Rose
         return 0.55 + 0.45 * cos(6.28318 * (t + vec3(0.9, 0.1, 0.3)));
       }
-      // Prismatic Rainbow
       return 0.5 + 0.5 * cos(6.28318 * (t + vec3(0.0, 0.33, 0.67)));
     }
 
@@ -201,21 +426,21 @@ export function initThreeStage(callbacks = {}) {
 
       vec4 texColor = texture2D(uMap, vUv);
 
-      // Diagonal specular glare sweep
+      // Diagonal specular glare sweep + Salute flash surge
       float sweepPos = (vUv.x * 0.85 + vUv.y * 0.65) - (uTilt.x * 0.65 + uTilt.y * 0.55) - 0.75;
-      float glare = exp(-sweepPos * sweepPos * 14.0) * 0.4;
+      float glare = exp(-sweepPos * sweepPos * 14.0) * 0.42 + uBurst * 0.32;
 
       // Holographic diamond lattice
       vec2 grid = fract(vUv * vec2(18.0, 25.0));
       float diamond = smoothstep(0.44, 0.5, abs(grid.x - 0.5) + abs(grid.y - 0.5));
       float holoPhase = vUv.x * 1.4 + vUv.y * 1.8 + uTilt.x * 1.5 - uTilt.y * 1.2 + uTime * 0.16;
-      vec3 foil = palette(holoPhase, uFoilMode) * (0.15 + 0.14 * (1.0 - diamond));
+      vec3 foil = palette(holoPhase, uFoilMode) * (0.16 + 0.15 * (1.0 - diamond));
 
       float border = smoothstep(-0.025, -0.005, dist) - smoothstep(-0.005, 0.0, dist);
       vec3 goldFrame = mix(vec3(0.98, 0.79, 0.34), vec3(0.45, 0.72, 1.0), uNight);
 
-      vec3 finalRgb = texColor.rgb + foil * (0.35 + length(uTilt) * 0.75) + vec3(1.0, 0.93, 0.75) * glare;
-      finalRgb = mix(finalRgb, goldFrame, border * 0.88);
+      vec3 finalRgb = texColor.rgb + foil * (0.38 + length(uTilt) * 0.75 + uBurst * 0.5) + vec3(1.0, 0.94, 0.78) * glare;
+      finalRgb = mix(finalRgb, goldFrame * (1.0 + uBurst * 0.6), border * 0.9);
 
       gl_FragColor = vec4(finalRgb, 1.0);
     }
@@ -226,7 +451,8 @@ export function initThreeStage(callbacks = {}) {
     uTime: { value: 0 },
     uTilt: { value: new THREE.Vector2(0, 0) },
     uNight: { value: 0 },
-    uFoilMode: { value: 0 }
+    uFoilMode: { value: 0 },
+    uBurst: { value: 0 }
   };
 
   const backUniforms = {
@@ -234,7 +460,8 @@ export function initThreeStage(callbacks = {}) {
     uTime: { value: 0 },
     uTilt: { value: new THREE.Vector2(0, 0) },
     uNight: { value: 0 },
-    uFoilMode: { value: 1 }
+    uFoilMode: { value: 1 },
+    uBurst: { value: 0 }
   };
 
   const facePlaneGeo = new THREE.PlaneGeometry(cardW - 0.11, cardH - 0.11);
@@ -263,8 +490,9 @@ export function initThreeStage(callbacks = {}) {
   backFaceMesh.position.z = -0.062;
   cardGroup.add(backFaceMesh);
 
-  // Corner Sapphire Gems & Top Crown Ship-Wheel
+  // Corner Sapphire Gems with Volumetric Bloom Auras
   const cornerGemGeo = new THREE.OctahedronGeometry(0.075, 0);
+  const bloomSprites = [];
   [
     [-cardW / 2 + 0.05, cardH / 2 - 0.05],
     [cardW / 2 - 0.05, cardH / 2 - 0.05],
@@ -274,13 +502,21 @@ export function initThreeStage(callbacks = {}) {
     const gem = new THREE.Mesh(cornerGemGeo, sapphireMat);
     gem.position.set(cx, cy, 0);
     gem.scale.set(0.95, 1.4, 1.35);
+    const halo = createBloomSprite(true, 0.36);
+    gem.add(halo);
+    bloomSprites.push({ sprite: halo, baseScale: 0.36 });
     cardGroup.add(gem);
   });
 
   const crestGroup = new THREE.Group();
   crestGroup.position.set(0, cardH / 2 + 0.08, 0);
   crestGroup.add(new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.022, 16, 32), goldMat));
-  crestGroup.add(new THREE.Mesh(new THREE.OctahedronGeometry(0.08, 0), sapphireMat));
+  const crestGem = new THREE.Mesh(new THREE.OctahedronGeometry(0.08, 0), sapphireMat);
+  const crestHalo = createBloomSprite(true, 0.42);
+  crestGem.add(crestHalo);
+  bloomSprites.push({ sprite: crestHalo, baseScale: 0.42 });
+  crestGroup.add(crestGem);
+
   for (let i = 0; i < 8; i++) {
     const spoke = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.13, 6), goldMat);
     const angle = (i / 8) * Math.PI * 2;
@@ -295,11 +531,8 @@ export function initThreeStage(callbacks = {}) {
   parasolHalo.position.set(0, 0.05, -0.26);
   sovereignGroup.add(parasolHalo);
 
-  const outerHaloRing = new THREE.Mesh(new THREE.TorusGeometry(1.18, 0.018, 16, 64), goldMat);
-  parasolHalo.add(outerHaloRing);
-
-  const innerHaloRing = new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.012, 12, 48), goldMat);
-  parasolHalo.add(innerHaloRing);
+  parasolHalo.add(new THREE.Mesh(new THREE.TorusGeometry(1.18, 0.018, 16, 64), goldMat));
+  parasolHalo.add(new THREE.Mesh(new THREE.TorusGeometry(0.92, 0.012, 12, 48), goldMat));
 
   for (let i = 0; i < 12; i++) {
     const angle = (i / 12) * Math.PI * 2;
@@ -308,24 +541,35 @@ export function initThreeStage(callbacks = {}) {
     rib.rotation.z = angle - Math.PI / 2;
     parasolHalo.add(rib);
 
+    const isSapph = i % 2 !== 0;
     const tipGem = new THREE.Mesh(
       new THREE.OctahedronGeometry(0.055, 0),
-      i % 2 === 0 ? geoCrystalMat : sapphireMat
+      isSapph ? sapphireMat : geoCrystalMat
     );
     tipGem.position.set(Math.cos(angle) * 1.24, Math.sin(angle) * 1.24, 0);
     tipGem.rotation.z = angle;
+    const tipHalo = createBloomSprite(isSapph, 0.28);
+    tipGem.add(tipHalo);
+    bloomSprites.push({ sprite: tipHalo, baseScale: 0.28 });
     parasolHalo.add(tipGem);
   }
 
-  // Orbiting 3D Geo & Sapphire Crystals
+  // Orbiting 3D Geo & Sapphire Crystals with Volumetric Unreal Bloom Auras
   const orbitGroup = new THREE.Group();
   holder.add(orbitGroup);
 
   const crystals = [];
   const crystalGeo = new THREE.OctahedronGeometry(0.12, 0);
   for (let i = 0; i < 8; i++) {
-    const mesh = new THREE.Mesh(crystalGeo, i % 3 === 0 ? sapphireMat : geoCrystalMat);
+    const isSapphire = i % 3 === 0;
+    const mesh = new THREE.Mesh(crystalGeo, isSapphire ? sapphireMat : geoCrystalMat);
     mesh.scale.set(0.75, 1.65, 0.75);
+
+    // Volumetric Unreal Bloom Aura around each 3D Crystal
+    const aura = createBloomSprite(isSapphire, 0.52);
+    mesh.add(aura);
+    bloomSprites.push({ sprite: aura, baseScale: 0.52 });
+
     if (i % 2 === 0) {
       const miniRing = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.008, 8, 24), goldMat);
       miniRing.rotation.x = Math.PI / 3;
@@ -356,7 +600,6 @@ export function initThreeStage(callbacks = {}) {
   const miniPlaneGeo = new THREE.PlaneGeometry(miniW, miniH);
   const miniFrameGeo = new THREE.PlaneGeometry(miniW + 0.06, miniH + 0.06);
 
-  // Constellation points for Rosa Multiflora (Rose-like 3D coordinates)
   const CONSTELLATION_POS = [
     new THREE.Vector3(0.0, 0.88, 0.25),
     new THREE.Vector3(0.85, 0.65, -0.15),
@@ -387,6 +630,11 @@ export function initThreeStage(callbacks = {}) {
     const face = new THREE.Mesh(miniPlaneGeo, mat);
     nodeGroup.add(face);
 
+    // Subtle corner star bloom on constellation nodes
+    const starGlow = createBloomSprite(i % 2 !== 0, 0.45);
+    starGlow.position.set(0, 0, -0.03);
+    nodeGroup.add(starGlow);
+
     loadPhotoIntoCardCanvas(
       "./Navia/" + item.file,
       can,
@@ -403,7 +651,6 @@ export function initThreeStage(callbacks = {}) {
     });
   }
 
-  // Golden Constellation Lines connecting Rosa Multiflora nodes
   const linePairs = [
     [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
     [6, 7], [7, 8], [8, 0], [0, 9], [9, 10], [9, 11],
@@ -424,7 +671,7 @@ export function initThreeStage(callbacks = {}) {
   lineGeo.setAttribute("position", new THREE.BufferAttribute(linePositions, 3));
   const constellationLines = new THREE.LineSegments(
     lineGeo,
-    new THREE.LineBasicMaterial({ color: 0xf7c654, transparent: true, opacity: 0.55 })
+    new THREE.LineBasicMaterial({ color: 0xf7c654, transparent: true, opacity: 0.65 })
   );
   constellationLines.visible = false;
   multiCardsGroup.add(constellationLines);
@@ -442,30 +689,13 @@ export function initThreeStage(callbacks = {}) {
   }
   pGeo.setAttribute("position", new THREE.BufferAttribute(pPositions, 3));
 
-  const spriteCan = document.createElement("canvas");
-  spriteCan.width = 64;
-  spriteCan.height = 64;
-  const sCtx = spriteCan.getContext("2d");
-  const sGrad = sCtx.createRadialGradient(32, 32, 2, 32, 32, 30);
-  sGrad.addColorStop(0, "rgba(255, 245, 200, 1)");
-  sGrad.addColorStop(0.45, "rgba(245, 190, 75, 0.78)");
-  sGrad.addColorStop(1, "rgba(232, 116, 42, 0)");
-  sCtx.fillStyle = sGrad;
-  sCtx.beginPath();
-  sCtx.moveTo(32, 2);
-  sCtx.lineTo(62, 32);
-  sCtx.lineTo(32, 62);
-  sCtx.lineTo(2, 32);
-  sCtx.closePath();
-  sCtx.fill();
-
   const particleSystem = new THREE.Points(
     pGeo,
     new THREE.PointsMaterial({
-      size: 0.095,
-      map: new THREE.CanvasTexture(spriteCan),
+      size: 0.11,
+      map: goldBloomTex,
       transparent: true,
-      opacity: 0.88,
+      opacity: 0.9,
       depthWrite: false,
       blending: THREE.AdditiveBlending
     })
@@ -510,14 +740,27 @@ export function initThreeStage(callbacks = {}) {
   }, true);
 
   // ==================================================
-  // STAGE CONTROLS & API
+  // STAGE CONTROLS & CRYSTAL SALUTE SHOCKWAVE TRIGGER
   // ==================================================
-  let stageMode = "sovereign"; // "sovereign" | "carousel" | "constellation"
+  let stageMode = "sovereign";
   let targetFlipY = 0;
   let currentFlipY = 0;
   let carouselSpinTarget = 0;
   let carouselSpinCurrent = 0;
   let saluteBurst = 0;
+  let shockwaveProgress = 1.0; // 0.0 -> 1.0 active expansion
+
+  function launchShockwave() {
+    shockwaveProgress = 0.0;
+    // Reset 36 Crystallize sparks to center origin
+    const arr = sparkGeo.attributes.position.array;
+    for (let i = 0; i < sparkCount; i++) {
+      arr[i * 3] = 0;
+      arr[i * 3 + 1] = 0;
+      arr[i * 3 + 2] = 0;
+    }
+    sparkGeo.attributes.position.needsUpdate = true;
+  }
 
   function setStageMode(mode) {
     stageMode = mode;
@@ -525,6 +768,7 @@ export function initThreeStage(callbacks = {}) {
     multiCardsGroup.visible = mode !== "sovereign";
     constellationLines.visible = mode === "constellation";
     saluteBurst = 0.9;
+    launchShockwave();
   }
 
   function flipCard() {
@@ -533,7 +777,7 @@ export function initThreeStage(callbacks = {}) {
     } else {
       targetFlipY += Math.PI;
     }
-    saluteBurst = Math.max(saluteBurst, 0.55);
+    saluteBurst = Math.max(saluteBurst, 0.65);
   }
 
   function cycleCard() {
@@ -552,7 +796,8 @@ export function initThreeStage(callbacks = {}) {
     }, true);
     targetFlipY += Math.PI * 2;
     carouselSpinTarget += (Math.PI * 2) / NODE_COUNT;
-    saluteBurst = 0.85;
+    saluteBurst = 0.95;
+    launchShockwave();
     return { index: currentCardIdx, total: CARD_DECK.length, item: frontItem };
   }
 
@@ -561,20 +806,26 @@ export function initThreeStage(callbacks = {}) {
     applyCardArt(url, options, false);
     setStageMode("sovereign");
     targetFlipY = Math.round(targetFlipY / (Math.PI * 2)) * (Math.PI * 2) + Math.PI * 2;
-    saluteBurst = 1.15;
+    saluteBurst = 1.3;
+    launchShockwave();
   }
 
   function triggerCrystalSalute() {
-    saluteBurst = 1.45;
+    saluteBurst = 1.65;
     targetFlipY += Math.PI * 2;
     carouselSpinTarget += (Math.PI * 2) / 3;
+    launchShockwave();
   }
 
   function setNightMode(isNight) {
-    holoUniforms.uNight.value = isNight ? 1.0 : 0.0;
-    backUniforms.uNight.value = isNight ? 1.0 : 0.0;
+    const nVal = isNight ? 1.0 : 0.0;
+    holoUniforms.uNight.value = nVal;
+    backUniforms.uNight.value = nVal;
+    godrayUniforms.uNight.value = nVal;
+    shockwaveUniforms.uNight.value = nVal;
     keyLight.color.setHex(isNight ? 0x9ec5ff : 0xffc98a);
     rimLight.color.setHex(isNight ? 0x4ea8ff : 0xffa24d);
+    saluteFlashLight.color.setHex(isNight ? 0x70b5ff : 0xffdf7a);
   }
 
   // Canvas drag / click interaction
@@ -631,13 +882,24 @@ export function initThreeStage(callbacks = {}) {
   window.addEventListener("resize", layout);
   canvas.classList.add("is-ready");
 
-  // Animation Loop
+  // Fire an initial gentle welcome bloom wave on load
+  setTimeout(() => {
+    saluteBurst = 0.85;
+    launchShockwave();
+  }, 450);
+
+  // ==================================================
+  // ANIMATION LOOP
+  // ==================================================
   const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const clock = new THREE.Clock();
+  let prevTime = 0;
 
   function animate() {
     requestAnimationFrame(animate);
     const t = clock.getElapsedTime();
+    const dt = Math.min(0.05, t - prevTime || 0.016);
+    prevTime = t;
     const reduced = reducedMotionQuery.matches;
 
     look.x += (target.x - look.x) * 0.04;
@@ -645,12 +907,65 @@ export function initThreeStage(callbacks = {}) {
 
     currentFlipY += (targetFlipY - currentFlipY) * 0.08;
     carouselSpinCurrent += (carouselSpinTarget - carouselSpinCurrent) * 0.07;
-    saluteBurst *= 0.94;
+    saluteBurst *= 0.935;
 
+    // Update shader uniforms & dynamic bloom intensity
     holoUniforms.uTime.value = t;
     holoUniforms.uTilt.value.set(look.x, look.y);
+    holoUniforms.uBurst.value = saluteBurst;
     backUniforms.uTime.value = t;
     backUniforms.uTilt.value.set(-look.x, look.y);
+    backUniforms.uBurst.value = saluteBurst;
+
+    godrayUniforms.uTime.value = t;
+    godrayUniforms.uBurst.value = saluteBurst;
+
+    // Pulse emissive bloom on crystals & flash light
+    geoCrystalMat.emissiveIntensity = 0.72 + Math.sin(t * 3.0) * 0.15 + saluteBurst * 1.45;
+    sapphireMat.emissiveIntensity = 0.75 + Math.cos(t * 2.6) * 0.15 + saluteBurst * 1.45;
+    goldMat.emissiveIntensity = 0.25 + saluteBurst * 0.65;
+    saluteFlashLight.intensity = saluteBurst * 9.5;
+
+    // Pulse volumetric bloom sprites
+    bloomSprites.forEach((b, idx) => {
+      const pulse = 1.0 + Math.sin(t * 3.2 + idx) * 0.12 + saluteBurst * 0.65;
+      b.sprite.scale.setScalar(b.baseScale * pulse);
+    });
+
+    // Update 3D Crystal Salute Shockwave Ring, 11 Rosula Beams & 36 Burst Sparks
+    if (shockwaveProgress < 1.0) {
+      shockwaveProgress = Math.min(1.0, shockwaveProgress + dt * 1.15);
+      shockwaveUniforms.uProgress.value = shockwaveProgress;
+      shockwaveMain.rotation.z = shockwaveProgress * 1.2;
+      shockwaveOrbital.rotation.z = -shockwaveProgress * 1.5;
+
+      // 11 Rosula Shardshot beams shooting radially outward
+      const beamAlpha = Math.sin(shockwaveProgress * Math.PI) * 0.95;
+      beamMat.opacity = beamAlpha;
+      shardBeams.forEach((b) => {
+        const dist = 0.35 + shockwaveProgress * b.speed;
+        b.mesh.position.set(
+          Math.cos(b.angle) * dist,
+          Math.sin(b.angle) * dist,
+          b.zOffset * shockwaveProgress
+        );
+        b.mesh.scale.set(1, 0.6 + shockwaveProgress * 1.6, 1);
+      });
+
+      // 36 Explosive Crystallize sparks
+      sparkMat.opacity = (1.0 - shockwaveProgress) * 0.98;
+      const sArr = sparkGeo.attributes.position.array;
+      for (let i = 0; i < sparkCount; i++) {
+        const v = sparkVelocities[i];
+        sArr[i * 3] += v.vx * dt * (1.2 - shockwaveProgress * 0.7);
+        sArr[i * 3 + 1] += v.vy * dt * (1.2 - shockwaveProgress * 0.7);
+        sArr[i * 3 + 2] += v.vz * dt * (1.2 - shockwaveProgress * 0.7);
+      }
+      sparkGeo.attributes.position.needsUpdate = true;
+    } else {
+      beamMat.opacity = 0;
+      sparkMat.opacity = 0;
+    }
 
     if (callbacks.onFrame) callbacks.onFrame(t);
 
@@ -667,13 +982,11 @@ export function initThreeStage(callbacks = {}) {
         (stageMode === "sovereign" ? currentFlipY : 0);
       pivot.rotation.x = look.y * 0.1 + Math.cos(t * 2.2) * 0.02;
 
-      // Rotate 3D Golden Parasol Halo & Crown
       crestGroup.rotation.z = t * 0.55;
       parasolHalo.rotation.z = -t * 0.28 - saluteBurst * 0.8;
-      const haloScale = 1 + saluteBurst * 0.22 + Math.sin(t * 2.0) * 0.025;
+      const haloScale = 1 + saluteBurst * 0.24 + Math.sin(t * 2.0) * 0.025;
       parasolHalo.scale.setScalar(haloScale);
 
-      // Update Mode 2 (Carousel Ring) & Mode 3 (Constellation) card nodes
       if (stageMode !== "sovereign") {
         const ringRadius = 1.85;
         multiNodes.forEach((node, idx) => {
@@ -686,7 +999,6 @@ export function initThreeStage(callbacks = {}) {
             node.group.rotation.y = angle;
             node.group.scale.setScalar(0.82 + (tz + ringRadius * 0.65) * 0.14);
           } else {
-            // Constellation mode
             const cp = node.constPos;
             const floatY = cp.y + Math.sin(t * 1.8 + idx) * 0.05;
             node.group.position.lerp(new THREE.Vector3(cp.x, floatY, cp.z), 0.1);
@@ -696,7 +1008,6 @@ export function initThreeStage(callbacks = {}) {
         });
       }
 
-      // Orbiting Geo crystals
       crystals.forEach((c, idx) => {
         const a = c.baseAngle + t * c.speed * (1 + saluteBurst * 2.5);
         const r = c.radius + Math.sin(t * 1.8 + c.phase) * 0.08 + saluteBurst * 0.48;
@@ -709,10 +1020,9 @@ export function initThreeStage(callbacks = {}) {
         c.mesh.rotation.x = Math.sin(t + idx) * 0.35;
       });
 
-      // Drift golden rose particles
       const posArr = pGeo.attributes.position.array;
       for (let i = 0; i < particleCount; i++) {
-        posArr[i * 3 + 1] += (0.003 + saluteBurst * 0.02) * (0.5 + (i % 3) * 0.3);
+        posArr[i * 3 + 1] += (0.003 + saluteBurst * 0.022) * (0.5 + (i % 3) * 0.3);
         if (posArr[i * 3 + 1] > 1.8) posArr[i * 3 + 1] = -1.8;
       }
       pGeo.attributes.position.needsUpdate = true;
