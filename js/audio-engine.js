@@ -4,7 +4,7 @@
 // - Auto-Pause BGM when Navia JP Voice (Toyosaki Aki)
 //   plays on Card / Salute click, then Auto-Resume BGM!
 // ==================================================
-import { JP_VOICE_LINES } from "./catalog.js?v=6";
+import { JP_VOICE_LINES } from "./catalog.js?v=7";
 
 class NaviaAudioEngine {
   constructor() {
@@ -27,7 +27,7 @@ class NaviaAudioEngine {
     this.voiceAudio = new Audio();
     this.voiceAudio.preload = "auto";
     this.voiceStopTimer = null;
-    this.cursors = { skill: 0, burst: 0, chest: 0, join: 0 };
+    this.cursors = { skill: 0, burst: 0, chest: 0, join: 0, nonburst: 0 };
     this.onStateChangeCallback = null;
     this.onVoiceSubCallback = null;
 
@@ -172,14 +172,21 @@ class NaviaAudioEngine {
 
   // ==================================================
   // PLAY NAVIA STUDIO JP VOICE LINE (Mutes BGM -> Plays JP Voice -> Resumes BGM)
-  // Categories: "skill" (6), "burst" (3), "chest" (3), "join" (3), or numeric ID (0..14)
+  // Categories: "burst" (3 exclusive), "nonburst" (12 Skill/Chest/Join),
+  //             "skill" (6), "chest" (3), "join" (3), or numeric ID (0..14)
   // ==================================================
-  playJpVoice(categoryOrId = "skill") {
+  playJpVoice(categoryOrId = "nonburst") {
     this.init();
 
     let clip = null;
     if (typeof categoryOrId === "number") {
       clip = JP_VOICE_LINES[categoryOrId % JP_VOICE_LINES.length];
+    } else if (categoryOrId === "nonburst") {
+      const pool = JP_VOICE_LINES.filter((v) => v.type !== "burst");
+      const cur = this.cursors.nonburst || 0;
+      // Rotate nicely across Skill, Chest, and Join lines (stride 5 coprime with 12)
+      clip = pool[(cur * 5) % pool.length];
+      this.cursors.nonburst = cur + 1;
     } else {
       const cat = ["skill", "burst", "chest", "join"].includes(categoryOrId)
         ? categoryOrId

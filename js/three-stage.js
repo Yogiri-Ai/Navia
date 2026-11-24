@@ -6,8 +6,8 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=6";
-import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=6";
+import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=7";
+import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=7";
 
 export function initThreeStage(callbacks = {}) {
   const canvas = document.getElementById("fox");
@@ -853,7 +853,10 @@ export function initThreeStage(callbacks = {}) {
           return;
         }
       }
+      // Clicking the 3D Card flips 180° + launches the full 3D Elemental Burst Shockwave & Rosula Barrage!
       flipCard();
+      saluteBurst = 1.65;
+      launchShockwave();
       if (callbacks.onCardInteract) callbacks.onCardInteract();
     } else if (stageMode === "carousel") {
       carouselSpinTarget += dx * 0.008;

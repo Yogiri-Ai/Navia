@@ -1,13 +1,15 @@
 // ==================================================
-// MAIN UI CONTROLLER (Default Multi-Track Music Box,
-// 15 Studio-Clean JP Voices on Every Bar & Interaction,
-// 3-Mode 3D Stage with Raycaster, 5-Star Wish & 22-Photo Archive)
+// MAIN UI CONTROLLER
+// - Clicking the 3D Card (and SALUTE) exclusively triggers
+//   Elemental Burst JP Voices + 3D Shockwave & Rosula Barrage!
+// - Clicking all other bars & buttons cycles across the
+//   12 non-burst JP Voice lines (Skill, Treasure Chest, Joining Party).
 // ==================================================
-import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, JP_VOICE_LINES } from "./catalog.js?v=6";
-import { audioEngine } from "./audio-engine.js?v=6";
-import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=6";
-import { initThreeStage } from "./three-stage.js?v=6";
-import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=6";
+import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, JP_VOICE_LINES } from "./catalog.js?v=7";
+import { audioEngine } from "./audio-engine.js?v=7";
+import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=7";
+import { initThreeStage } from "./three-stage.js?v=7";
+import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=7";
 
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.getElementById("hero");
@@ -68,13 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   );
 
-  // Initialize Three.js 3-Mode Stage with Raycaster Picking
+  // Clicking the 3D Card (center card or any 3D card in Ring/Stars) exclusively plays Elemental Burst + 3D Shockwave!
   const stage = initThreeStage({
     onCardInteract: () => {
-      audioEngine.playJpVoice("skill");
+      audioEngine.playJpVoice("burst");
     },
     onPick3DCard: (pickedItem) => {
-      audioEngine.playJpVoice("skill");
+      audioEngine.playJpVoice("burst");
       setStageModeUI("sovereign", true);
       showToast(pickedItem.title);
     },
@@ -84,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ==================================================
-  // 1. CLIP-PATH MORPHING HAMBURGER MENU (Exact Spec)
+  // 1. CLIP-PATH MORPHING HAMBURGER MENU
   // ==================================================
   function updatePillWidth() {
     if (brand && menu) {
@@ -114,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   burger.addEventListener("click", () => {
     const willOpen = !hero.classList.contains("is-menu-open");
-    if (willOpen) audioEngine.playJpVoice("join");
+    if (willOpen) audioEngine.playJpVoice("nonburst");
     toggleMenu();
   });
 
@@ -136,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
   modeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       const mode = btn.getAttribute("data-stage-mode");
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setStageModeUI(mode);
       const labelMap = {
         sovereign: "Sovereign Card Stage",
@@ -197,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.title = photoMeta.title;
     btn.innerHTML = `<img src="${layer.getAttribute("src")}" alt="${photoMeta.title}" style="object-position:${posStr}">`;
     btn.addEventListener("click", () => {
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setWallpaper(idx);
       showToast(photoMeta.title);
     });
@@ -205,7 +207,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("btnNextWp").addEventListener("click", () => {
-    audioEngine.playJpVoice("join");
+    audioEngine.playJpVoice("nonburst");
     setWallpaper(currentWpIdx + 1);
     showToast(ALL_PHOTOS[currentWpIdx].title);
   });
@@ -224,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       btnAutoCinema.classList.add("is-cinema-on");
       btnAutoCinema.textContent = "Cinema On";
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       stage.triggerCrystalSalute();
       showToast("Cinema Exhibition Active");
       cinemaTimer = setInterval(() => {
@@ -244,12 +246,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("themeToggle").addEventListener("click", () => {
     const isNight = hero.classList.toggle("is-night");
-    audioEngine.playJpVoice("join");
+    audioEngine.playJpVoice("nonburst");
     stage.setNightMode(isNight);
     showToast(isNight ? "Poisson Midnight Atmosphere" : "Fontaine Daylight Atmosphere");
   });
 
-  // Bottom Right Bar 3D Controls (Every button triggers Navia JP Voice!)
+  // Bottom Right Bar 3D Controls
+  // SALUTE is exclusive Elemental Burst; FLIP & ART play from the 12 non-burst voices
   document.getElementById("btnSalute").addEventListener("click", () => {
     audioEngine.playJpVoice("burst");
     stage.triggerCrystalSalute();
@@ -257,12 +260,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("btnFlipCard").addEventListener("click", () => {
-    audioEngine.playJpVoice("skill");
+    audioEngine.playJpVoice("nonburst");
     stage.flipCard();
   });
 
   btnNextCard.addEventListener("click", () => {
-    audioEngine.playJpVoice("skill");
+    audioEngine.playJpVoice("nonburst");
     const info = stage.cycleCard();
     btnNextCard.textContent = `Art ${String(info.index + 1).padStart(2, "0")}/${info.total}`;
   });
@@ -306,7 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const posStr = `${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
     btn.innerHTML = `<img src="./Navia/${item.file}" alt="${item.title}" loading="lazy" style="object-position:${posStr}">`;
     btn.addEventListener("click", () => {
-      audioEngine.playJpVoice("chest");
+      audioEngine.playJpVoice("nonburst");
       studioState.photoFile = item.file;
       Array.from(studioPhotoStrip.children).forEach((c) => c.classList.toggle("is-active", c === btn));
       updateStudioPreview();
@@ -324,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Array.from(foilOptionsEl.querySelectorAll(".foil-chip")).forEach((c) => {
       c.classList.toggle("is-active", c === chip);
     });
-    audioEngine.playJpVoice("skill");
+    audioEngine.playJpVoice("nonburst");
     updateStudioPreview();
   });
 
@@ -338,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("btnApplyTo3D").addEventListener("click", () => {
-    audioEngine.playJpVoice("burst");
+    audioEngine.playJpVoice("nonburst");
     setStageModeUI("sovereign");
     stage.applyCustomCardFromStudio("./Navia/" + studioState.photoFile, studioState);
     studioDrawer.classList.remove("is-open");
@@ -346,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("btnExportPng").addEventListener("click", () => {
-    audioEngine.playJpVoice("chest");
+    audioEngine.playJpVoice("nonburst");
     const ok = exportCanvasAsPng(studioCanvas, "Navia-Sovereign-Card-HD.png");
     showToast(ok ? "Saved Navia-Sovereign-Card-HD.png" : "Export Complete");
   });
@@ -358,10 +361,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==================================================
   const wishSystem = initWishSummonSystem({
     onWishSound: () => {
-      audioEngine.playJpVoice("chest");
+      audioEngine.playJpVoice("nonburst");
     },
     onEquipCard: (photoItem) => {
-      audioEngine.playJpVoice("burst");
+      audioEngine.playJpVoice("nonburst");
       setStageModeUI("sovereign");
       stage.applyCustomCardFromStudio("./Navia/" + photoItem.file, {
         title: "N A V I A",
@@ -387,7 +390,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const lightboxImg = document.getElementById("lightboxImg");
   let activeLightboxPhoto = ALL_PHOTOS[0];
 
-  // Dynamically populate all 15 Studio-Clean Japanese Voice Lines (Zero Fallen / Low HP!)
   if (voiceListEl) {
     voiceListEl.innerHTML = "";
     JP_VOICE_LINES.forEach((v) => {
@@ -438,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const btn = e.target.closest("[data-act]");
         const act = btn ? btn.getAttribute("data-act") : "zoom";
         if (act === "card") {
-          audioEngine.playJpVoice("skill");
+          audioEngine.playJpVoice("nonburst");
           setStageModeUI("sovereign");
           stage.applyCustomCardFromStudio(url, {
             title: "N A V I A",
@@ -448,7 +450,7 @@ document.addEventListener("DOMContentLoaded", () => {
           closeAllDrawers();
           showToast(item.title);
         } else if (act === "studio") {
-          audioEngine.playJpVoice("chest");
+          audioEngine.playJpVoice("nonburst");
           studioState.photoFile = item.file;
           studioState.subtitle = item.title.toUpperCase();
           inputSubtitle.value = studioState.subtitle;
@@ -456,8 +458,7 @@ document.addEventListener("DOMContentLoaded", () => {
           galleryDrawer.classList.remove("is-open");
           studioDrawer.classList.add("is-open");
         } else if (act === "bg") {
-          audioEngine.playJpVoice("join");
-          const posStr = `${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
+          audioEngine.playJpVoice("nonburst");
           hero.style.backgroundImage = `url("${url}")`;
           bgLayers.forEach((l) => l.classList.remove("is-active"));
           bgLayers[0].src = url;
@@ -466,7 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
           closeAllDrawers();
           showToast(item.title);
         } else {
-          audioEngine.playJpVoice("chest");
+          audioEngine.playJpVoice("nonburst");
           activeLightboxPhoto = item;
           lightboxImg.src = url;
           lightbox.classList.add("is-open");
@@ -481,7 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("galleryFilters").addEventListener("click", (e) => {
     const btn = e.target.closest(".filter-tab");
     if (!btn) return;
-    audioEngine.playJpVoice("skill");
+    audioEngine.playJpVoice("nonburst");
     Array.from(document.querySelectorAll(".filter-tab")).forEach((b) => {
       b.classList.toggle("is-active", b === btn);
     });
@@ -492,14 +493,14 @@ document.addEventListener("DOMContentLoaded", () => {
     closeAllDrawers();
     if (action === "gallery") {
       galleryDrawer.classList.add("is-open");
-      audioEngine.playJpVoice("chest");
+      audioEngine.playJpVoice("nonburst");
     } else if (action === "dossier") {
       dossierDrawer.classList.add("is-open");
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
     } else if (action === "studio") {
       updateStudioPreview();
       studioDrawer.classList.add("is-open");
-      audioEngine.playJpVoice("chest");
+      audioEngine.playJpVoice("nonburst");
     } else if (action === "wish") {
       wishSystem.openWish(1);
     } else if (action === "salute") {
@@ -507,7 +508,7 @@ document.addEventListener("DOMContentLoaded", () => {
       stage.triggerCrystalSalute();
     } else if (action === "carousel") {
       setStageModeUI("carousel");
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
     }
   }
 
@@ -538,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("lbSetBg").addEventListener("click", () => {
     const url = "./Navia/" + activeLightboxPhoto.file;
     const posStr = `${Math.round((activeLightboxPhoto.fx ?? 0.5) * 100)}% ${Math.round((activeLightboxPhoto.fy ?? 0.38) * 100)}%`;
-    audioEngine.playJpVoice("join");
+    audioEngine.playJpVoice("nonburst");
     hero.style.backgroundImage = `url("${url}")`;
     bgLayers.forEach((l) => l.classList.remove("is-active"));
     bgLayers[0].src = url;
@@ -549,7 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("lbSetCard").addEventListener("click", () => {
     const url = "./Navia/" + activeLightboxPhoto.file;
-    audioEngine.playJpVoice("skill");
+    audioEngine.playJpVoice("nonburst");
     setStageModeUI("sovereign");
     stage.applyCustomCardFromStudio(url, {
       title: "N A V I A",
@@ -585,19 +586,19 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (e.key === "c" || e.key === "C") {
       toggleAutoCinema();
     } else if (e.key === "1") {
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setStageModeUI("sovereign");
     } else if (e.key === "2") {
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setStageModeUI("carousel");
     } else if (e.key === "3") {
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setStageModeUI("constellation");
     } else if (e.key === "ArrowRight") {
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setWallpaper(currentWpIdx + 1);
     } else if (e.key === "ArrowLeft") {
-      audioEngine.playJpVoice("join");
+      audioEngine.playJpVoice("nonburst");
       setWallpaper(currentWpIdx - 1);
     }
   });
