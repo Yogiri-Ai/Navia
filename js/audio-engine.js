@@ -4,7 +4,7 @@
 // - Auto-Pause BGM when Navia JP Voice (Toyosaki Aki)
 //   plays on Card / Salute click, then Auto-Resume BGM!
 // ==================================================
-import { JP_VOICE_LINES } from "./catalog.js?v=5";
+import { JP_VOICE_LINES } from "./catalog.js?v=6";
 
 class NaviaAudioEngine {
   constructor() {

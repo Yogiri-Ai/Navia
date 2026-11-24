@@ -1,8 +1,8 @@
 // ==================================================
 // HIGH-DPI SOVEREIGN CARD COMPOSITOR & HD PNG EXPORTER
-// Clean Art Deco Filigree Frame (Zero Checkerboard Obstruction)
+// Face-Aware Smart Focal Point Cropping (fx, fy)
 // ==================================================
-import { FOIL_THEMES } from "./catalog.js?v=5";
+import { FOIL_THEMES, getPhotoFocal } from "./catalog.js?v=6";
 
 export function createBaseCardCanvas(themeKey = "geo") {
   const c = document.createElement("canvas");
@@ -37,23 +37,27 @@ export function paintSovereignCard(targetCanvas, img, options = {}) {
   const title = (options.title || "N A V I A").toUpperCase();
   const subtitle = (options.subtitle || "SPINA DI ROSULA").toUpperCase();
   const badgeText = (options.badge || theme.badge).toUpperCase();
+  const fx = typeof options.fx === "number" ? options.fx : 0.5;
+  const fy = typeof options.fy === "number" ? options.fy : 0.38;
 
   const ctx = targetCanvas.getContext("2d");
   const cw = targetCanvas.width;
   const ch = targetCanvas.height;
   ctx.clearRect(0, 0, cw, ch);
 
-  // 1. Pure, unobstructed high-resolution portrait draw
+  // 1. Face-aware smart focal-point cover draw (never chops Navia's face!)
   if (img && img.width > 0 && img.height > 0) {
     const imgAspect = img.width / img.height;
     const canAspect = cw / ch;
     let sx = 0, sy = 0, sw = img.width, sh = img.height;
     if (imgAspect > canAspect) {
       sw = img.height * canAspect;
-      sx = (img.width - sw) * 0.5;
+      // Align horizontal crop window directly onto Navia's face focal point fx
+      sx = Math.max(0, Math.min(img.width - sw, img.width * fx - sw * 0.5));
     } else {
       sh = img.width / canAspect;
-      sy = (img.height - sh) * 0.18;
+      // Align vertical crop window onto Navia's face focal point fy (slightly above center for headroom)
+      sy = Math.max(0, Math.min(img.height - sh, img.height * fy - sh * 0.42));
     }
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
   } else {
@@ -78,7 +82,6 @@ export function paintSovereignCard(targetCanvas, img, options = {}) {
   ctx.lineWidth = 2.5;
   ctx.strokeRect(46, 46, cw - 92, ch - 92);
 
-  // Corner Art Deco diamond nodes
   ctx.globalAlpha = 0.95;
   [
     [46, 46],
@@ -139,6 +142,13 @@ export function paintSovereignCard(targetCanvas, img, options = {}) {
 export function loadPhotoIntoCardCanvas(url, targetCanvas, options = {}, onComplete) {
   const fileKey = url.split("/Navia/").pop();
   const inlineMap = window.NAVIA_WEBGL_TEX || {};
+  const focal = getPhotoFocal(fileKey);
+  const mergedOptions = {
+    ...options,
+    fx: typeof options.fx === "number" ? options.fx : focal.fx,
+    fy: typeof options.fy === "number" ? options.fy : focal.fy
+  };
+
   const safeSrc = (window.location.protocol === "file:" && inlineMap[fileKey])
     ? inlineMap[fileKey]
     : (inlineMap[fileKey] || url);
@@ -152,19 +162,19 @@ export function loadPhotoIntoCardCanvas(url, targetCanvas, options = {}, onCompl
       const tCtx = testCan.getContext("2d");
       tCtx.drawImage(img, 0, 0, 2, 2);
       tCtx.getImageData(0, 0, 1, 1);
-      paintSovereignCard(targetCanvas, img, options);
+      paintSovereignCard(targetCanvas, img, mergedOptions);
       if (onComplete) onComplete(targetCanvas);
     } catch (e) {
       if (inlineMap[fileKey] && img.src !== inlineMap[fileKey]) {
         img.src = inlineMap[fileKey];
       } else {
-        paintSovereignCard(targetCanvas, null, options);
+        paintSovereignCard(targetCanvas, null, mergedOptions);
         if (onComplete) onComplete(targetCanvas);
       }
     }
   };
   img.onerror = () => {
-    paintSovereignCard(targetCanvas, null, options);
+    paintSovereignCard(targetCanvas, null, mergedOptions);
     if (onComplete) onComplete(targetCanvas);
   };
   img.src = safeSrc;

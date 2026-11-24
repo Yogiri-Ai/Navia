@@ -3,11 +3,11 @@
 // 15 Studio-Clean JP Voices on Every Bar & Interaction,
 // 3-Mode 3D Stage with Raycaster, 5-Star Wish & 22-Photo Archive)
 // ==================================================
-import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, JP_VOICE_LINES } from "./catalog.js?v=5";
-import { audioEngine } from "./audio-engine.js?v=5";
-import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=5";
-import { initThreeStage } from "./three-stage.js?v=5";
-import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=5";
+import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, JP_VOICE_LINES } from "./catalog.js?v=6";
+import { audioEngine } from "./audio-engine.js?v=6";
+import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=6";
+import { initThreeStage } from "./three-stage.js?v=6";
+import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=6";
 
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.getElementById("hero");
@@ -188,14 +188,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   bgLayers.forEach((layer, idx) => {
+    const photoMeta = ALL_PHOTOS[idx];
+    const posStr = `${Math.round((photoMeta.fx ?? 0.5) * 100)}% ${Math.round((photoMeta.fy ?? 0.35) * 100)}%`;
+    layer.style.objectPosition = posStr;
+
     const btn = document.createElement("button");
     btn.className = "wp-thumb" + (idx === 0 ? " is-active" : "");
-    btn.title = ALL_PHOTOS[idx].title;
-    btn.innerHTML = `<img src="${layer.getAttribute("src")}" alt="${ALL_PHOTOS[idx].title}">`;
+    btn.title = photoMeta.title;
+    btn.innerHTML = `<img src="${layer.getAttribute("src")}" alt="${photoMeta.title}" style="object-position:${posStr}">`;
     btn.addEventListener("click", () => {
       audioEngine.playJpVoice("join");
       setWallpaper(idx);
-      showToast(ALL_PHOTOS[idx].title);
+      showToast(photoMeta.title);
     });
     wpThumbsContainer.appendChild(btn);
   });
@@ -299,7 +303,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = document.createElement("button");
     btn.className = "studio-photo-pick" + (item.file === studioState.photoFile ? " is-active" : "");
     btn.title = item.title;
-    btn.innerHTML = `<img src="./Navia/${item.file}" alt="${item.title}" loading="lazy">`;
+    const posStr = `${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
+    btn.innerHTML = `<img src="./Navia/${item.file}" alt="${item.title}" loading="lazy" style="object-position:${posStr}">`;
     btn.addEventListener("click", () => {
       audioEngine.playJpVoice("chest");
       studioState.photoFile = item.file;
@@ -415,8 +420,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = document.createElement("div");
       card.className = "g-card" + (item.wide ? " is-wide" : "");
       const url = "./Navia/" + item.file;
+      const posStr = `${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
       card.innerHTML = `
-        <img src="${url}" alt="${item.title}" loading="lazy">
+        <img src="${url}" alt="${item.title}" loading="lazy" style="object-position:${posStr}">
         <div class="g-card__overlay">
           <div class="g-card__title">${item.title}</div>
           <div class="g-card__actions">
@@ -451,9 +457,11 @@ document.addEventListener("DOMContentLoaded", () => {
           studioDrawer.classList.add("is-open");
         } else if (act === "bg") {
           audioEngine.playJpVoice("join");
+          const posStr = `${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
           hero.style.backgroundImage = `url("${url}")`;
           bgLayers.forEach((l) => l.classList.remove("is-active"));
           bgLayers[0].src = url;
+          bgLayers[0].style.objectPosition = posStr;
           bgLayers[0].classList.add("is-active");
           closeAllDrawers();
           showToast(item.title);
@@ -529,10 +537,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.getElementById("lbSetBg").addEventListener("click", () => {
     const url = "./Navia/" + activeLightboxPhoto.file;
+    const posStr = `${Math.round((activeLightboxPhoto.fx ?? 0.5) * 100)}% ${Math.round((activeLightboxPhoto.fy ?? 0.38) * 100)}%`;
     audioEngine.playJpVoice("join");
     hero.style.backgroundImage = `url("${url}")`;
     bgLayers.forEach((l) => l.classList.remove("is-active"));
     bgLayers[0].src = url;
+    bgLayers[0].style.objectPosition = posStr;
     bgLayers[0].classList.add("is-active");
     closeAllDrawers();
     showToast(activeLightboxPhoto.title);

@@ -2,7 +2,7 @@
 // GOLDEN GEO CURSOR TRAIL, CLICK CRYSTALLIZE RIPPLE
 // & 5-STAR GOLDEN METEOR WISH SUMMON ANIMATION
 // ==================================================
-import { ALL_PHOTOS, VOICE_QUOTES } from "./catalog.js?v=5";
+import { ALL_PHOTOS, VOICE_QUOTES } from "./catalog.js?v=6";
 
 export function initCursorTrail() {
   const canvas = document.getElementById("cursorFx");
@@ -264,6 +264,7 @@ export function initWishSummonSystem(callbacks = {}) {
         const pick = ALL_PHOTOS[Math.floor(Math.random() * ALL_PHOTOS.length)];
         lastPulledPhoto = pick;
         singleImg.src = "./Navia/" + pick.file;
+        singleImg.style.objectPosition = `${Math.round((pick.fx ?? 0.5) * 100)}% ${Math.round((pick.fy ?? 0.38) * 100)}%`;
         singleTitle.textContent = pick.title;
         singleQuote.textContent =
           VOICE_QUOTES[Math.floor(Math.random() * VOICE_QUOTES.length)];
@@ -277,8 +278,9 @@ export function initWishSummonSystem(callbacks = {}) {
           const card = document.createElement("div");
           card.className = "wish-multi-card";
           card.style.animationDelay = `${idx * 0.06}s`;
+          const focalStyle = `object-position:${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
           card.innerHTML = `
-            <img src="./Navia/${item.file}" alt="${item.title}">
+            <img src="./Navia/${item.file}" alt="${item.title}" style="${focalStyle}">
             <div class="wish-multi-card__stars">★ ★ ★ ★ ★</div>
             <div class="wish-multi-card__name">${item.title}</div>
           `;

@@ -22,7 +22,8 @@
 html,
 body {
   height: 100%;
-  background: #f4ece4;
+  height: 100dvh;
+  background: #140e0a;
 }
 
 body {
@@ -30,6 +31,8 @@ body {
   color: var(--white);
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   user-select: none;
 }
 

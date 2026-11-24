@@ -6,8 +6,8 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=5";
-import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=5";
+import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=6";
+import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=6";
 
 export function initThreeStage(callbacks = {}) {
   const canvas = document.getElementById("fox");
@@ -894,11 +894,21 @@ export function initThreeStage(callbacks = {}) {
     camera.aspect = aspect;
     camera.updateProjectionMatrix();
 
+    const visibleH = 2 * Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
+    const visibleW = visibleH * aspect;
     const mobile = width < 720;
-    baseX = mobile ? 0 : 0.05;
-    baseY = mobile ? 0.45 : 0.05;
-    const pScale = mobile ? 0.62 : Math.min(1, Math.max(0.75, aspect / 1.78));
-    pivot.scale.setScalar(pScale);
+
+    if (mobile) {
+      baseX = 0;
+      baseY = 0.14;
+      const fitW = (visibleW * 0.9) / 2.65;
+      pivot.scale.setScalar(Math.min(0.68, Math.max(0.46, fitW)));
+    } else {
+      baseX = width < 1160 ? 0.16 : 0.06;
+      baseY = 0.04;
+      const fitW = (visibleW * 0.65) / 2.65;
+      pivot.scale.setScalar(Math.min(1.0, Math.max(0.68, Math.min(aspect / 1.72, fitW))));
+    }
   }
 
   layout();
