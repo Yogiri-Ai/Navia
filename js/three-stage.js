@@ -6,8 +6,8 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=7";
-import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=7";
+import { CARD_DECK, FOIL_THEMES } from "./catalog.js?v=8";
+import { createBaseCardCanvas, loadPhotoIntoCardCanvas } from "./card-renderer.js?v=8";
 
 export function initThreeStage(callbacks = {}) {
   const canvas = document.getElementById("fox");

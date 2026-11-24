@@ -2,7 +2,7 @@
 // GOLDEN GEO CURSOR TRAIL, CLICK CRYSTALLIZE RIPPLE
 // & 5-STAR GOLDEN METEOR WISH SUMMON ANIMATION
 // ==================================================
-import { ALL_PHOTOS, VOICE_QUOTES } from "./catalog.js?v=7";
+import { ALL_PHOTOS, VOICE_QUOTES } from "./catalog.js?v=8";
 
 export function initCursorTrail() {
   const canvas = document.getElementById("cursorFx");
@@ -263,6 +263,10 @@ export function initWishSummonSystem(callbacks = {}) {
         multiGrid.style.display = "none";
         const pick = ALL_PHOTOS[Math.floor(Math.random() * ALL_PHOTOS.length)];
         lastPulledPhoto = pick;
+        singleImg.onerror = () => {
+          const fb = window.NAVIA_WEBGL_TEX?.[pick.file];
+          if (fb && singleImg.src !== fb) singleImg.src = fb;
+        };
         singleImg.src = "./Navia/" + pick.file;
         singleImg.style.objectPosition = `${Math.round((pick.fx ?? 0.5) * 100)}% ${Math.round((pick.fy ?? 0.38) * 100)}%`;
         singleTitle.textContent = pick.title;
@@ -284,6 +288,13 @@ export function initWishSummonSystem(callbacks = {}) {
             <div class="wish-multi-card__stars">★ ★ ★ ★ ★</div>
             <div class="wish-multi-card__name">${item.title}</div>
           `;
+          const mImg = card.querySelector("img");
+          if (mImg) {
+            mImg.onerror = () => {
+              const fb = window.NAVIA_WEBGL_TEX?.[item.file];
+              if (fb && mImg.src !== fb) mImg.src = fb;
+            };
+          }
           card.addEventListener("click", () => {
             lastPulledPhoto = item;
             if (callbacks.onEquipCard) callbacks.onEquipCard(item);

@@ -5,11 +5,11 @@
 // - Clicking all other bars & buttons cycles across the
 //   12 non-burst JP Voice lines (Skill, Treasure Chest, Joining Party).
 // ==================================================
-import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, JP_VOICE_LINES } from "./catalog.js?v=7";
-import { audioEngine } from "./audio-engine.js?v=7";
-import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=7";
-import { initThreeStage } from "./three-stage.js?v=7";
-import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=7";
+import { ALL_PHOTOS, CARD_DECK, HEADLINES, FOIL_THEMES, JP_VOICE_LINES } from "./catalog.js?v=8";
+import { audioEngine } from "./audio-engine.js?v=8";
+import { loadPhotoIntoCardCanvas, exportCanvasAsPng } from "./card-renderer.js?v=8";
+import { initThreeStage } from "./three-stage.js?v=8";
+import { initCursorTrail, initWishSummonSystem } from "./cursor-fx.js?v=8";
 
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.getElementById("hero");
@@ -308,6 +308,13 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.title = item.title;
     const posStr = `${Math.round((item.fx ?? 0.5) * 100)}% ${Math.round((item.fy ?? 0.38) * 100)}%`;
     btn.innerHTML = `<img src="./Navia/${item.file}" alt="${item.title}" loading="lazy" style="object-position:${posStr}">`;
+    const sImg = btn.querySelector("img");
+    if (sImg) {
+      sImg.onerror = () => {
+        const fb = window.NAVIA_WEBGL_TEX?.[item.file];
+        if (fb && sImg.src !== fb) sImg.src = fb;
+      };
+    }
     btn.addEventListener("click", () => {
       audioEngine.playJpVoice("nonburst");
       studioState.photoFile = item.file;
@@ -435,6 +442,13 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       `;
+      const gImg = card.querySelector("img");
+      if (gImg) {
+        gImg.onerror = () => {
+          const fb = window.NAVIA_WEBGL_TEX?.[item.file];
+          if (fb && gImg.src !== fb) gImg.src = fb;
+        };
+      }
 
       card.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-act]");

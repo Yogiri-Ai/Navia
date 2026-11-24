@@ -2,7 +2,7 @@
 // HIGH-DPI SOVEREIGN CARD COMPOSITOR & HD PNG EXPORTER
 // Face-Aware Smart Focal Point Cropping (fx, fy)
 // ==================================================
-import { FOIL_THEMES, getPhotoFocal } from "./catalog.js?v=7";
+import { FOIL_THEMES, getPhotoFocal } from "./catalog.js?v=8";
 
 export function createBaseCardCanvas(themeKey = "geo") {
   const c = document.createElement("canvas");

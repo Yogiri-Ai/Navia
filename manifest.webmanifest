@@ -1,0 +1,18 @@
+{
+  "name": "NAVIA | Spina di Rosula Royal Archive",
+  "short_name": "NAVIA",
+  "description": "Interactive 3D WebGL Showcase for Navia of the Spina di Rosula with Fontaine Symphonic Music Box, Japanese Voice Lines, and 22-Photo 4K Archive.",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#140e0a",
+  "theme_color": "#e8742a",
+  "icons": [
+    {
+      "src": "./Navia/Navia%20icon.jpg",
+      "sizes": "735x737",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
