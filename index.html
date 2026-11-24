@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Navia — Spina di Rosula | 3D Sovereign Showcase &amp; Royal Archive</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Questrial&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Modular Stylesheets -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/modals.css">
+
+  <!-- Three.js r160 Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main class="hero" id="hero">
+    <!-- z-index 0: 4K Navia Wallpaper Crossfader & Spec Video Fallback -->
+    <div class="hero__video-wrap" id="bgStage">
+      <img class="hero__bg-layer is-active" src="./Navia/1351553.jpeg" alt="Navia Golden Sunlight in Fontaine">
+      <img class="hero__bg-layer" src="./Navia/1346600.jpeg" alt="Navia Golden Rose & Verdict">
+      <img class="hero__bg-layer" src="./Navia/1346601.jpeg" alt="Navia Sunglasses Demoiselle">
+      <img class="hero__bg-layer" src="./Navia/1346602.jpeg" alt="Navia Vintage Frame">
+      <img class="hero__bg-layer" src="./Navia/1346603.jpeg" alt="Navia Macaron Salon">
+      <img class="hero__bg-layer" src="./Navia/1335748.jpeg" alt="Navia Sunflowers">
+      <img class="hero__bg-layer" src="./Navia/1344732.jpeg" alt="Navia Afternoon Macarons">
+      <img class="hero__bg-layer" src="./Navia/1360834.jpeg" alt="Navia Lavender Breeze">
+    </div>
+    <video
+      class="hero__video"
+      src="./Navia/1351553.jpeg"
+      poster="./Navia/1351553.jpeg"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+    ></video>
+
+    <!-- z-index 1: Warm Geo Gold & Espresso Shade -->
+    <div class="hero__shade"></div>
+
+    <!-- z-index 2: Three.js 3-Mode Interactive 3D Stage -->
+    <canvas id="fox" aria-label="Interactive 3D Holographic Navia Stage"></canvas>
+
+    <!-- z-index 5: Top-Center 3D Stage Mode Switcher & Fontaine Music Box -->
+    <div class="stage-switcher" aria-label="3D Stage Mode and Music Box">
+      <button class="stage-mode-btn is-active" data-stage-mode="sovereign">
+        &#10022; Sovereign Card
+      </button>
+      <button class="stage-mode-btn" data-stage-mode="carousel">
+        &#9678; 3D Carousel Ring
+      </button>
+      <button class="stage-mode-btn" data-stage-mode="constellation">
+        &#9733; Rosa Constellation
+      </button>
+      <div class="stage-divider"></div>
+      <button class="music-btn" id="btnMusicBox" title="Play Fontaine Music Box Waltz">
+        <canvas class="music-viz" id="musicViz" width="34" height="16"></canvas>
+        <span id="musicBoxLabel">Music Box</span>
+      </button>
+    </div>
+
+    <!-- z-index 5: Headline -->
+    <h1 class="headline" id="headline">
+      <span>streamlined</span>
+      <span class="u">operations</span>
+      <span>feel</span>
+      <span class="u indent">breezy</span>
+    </h1>
+
+    <!-- Lore Badge under Headline -->
+    <div class="hero-meta">
+      <div class="hero-meta__tag"><i></i> Spina di Rosula &bull; President &amp; Commander</div>
+      <p class="hero-meta__quote" id="heroQuote">
+        &ldquo;From Poisson to the Court of Fontaine — every commission handled with golden precision and a fresh box of macarons.&rdquo;
+      </p>
+    </div>
+
+    <!-- z-index 5: Bottom Interactive HUD Controls -->
+    <div class="hud-dock">
+      <div class="hud-group">
+        <span class="hud-label hide-sm">4K Scene</span>
+        <div class="wp-thumbs" id="wpThumbs"></div>
+        <button class="hud-btn" id="btnNextWp" title="Switch 4K Navia Wallpaper">Next BG &#8635;</button>
+      </div>
+
+      <div class="hud-group">
+        <button class="hud-btn hud-btn--gold" id="btnSalute" title="Fire Geo Crystal Salute">Crystal Salute &#10022;</button>
+        <button class="hud-btn" id="btnFlipCard" title="Flip or Spin 3D Stage">Flip 3D &#8644;</button>
+        <button class="hud-btn" id="btnNextCard" title="Switch 3D Card Portrait Art">Card Art (1/22) &rarr;</button>
+        <button class="hud-btn hud-btn--studio" id="btnOpenStudio" title="Customize & Export HD PNG Card">Card Studio &#9998;</button>
+        <button class="hud-btn hide-sm" id="btnOpenGallery" title="View All 22 Local Navia Photos">22 Photos &#9783;</button>
+      </div>
+    </div>
+
+    <!-- z-index 6: Menu Backdrop -->
+    <div class="menu-backdrop" data-close></div>
+
+    <!-- z-index 7: Clip-Path Morphing Menu Panel -->
+    <nav class="menu" id="menu" aria-label="Main menu">
+      <ul class="menu__list">
+        <li class="menu__item">
+          <a class="menu__link" href="#platform" data-menu-action="salute">
+            <small>01</small>platform <span class="menu__sub">crystal salute</span>
+            <img class="menu__thumb" src="./Navia/1346600.jpeg" alt="Platform">
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__link" href="#story" data-menu-action="dossier">
+            <small>02</small>story <span class="menu__sub">chronicle &amp; lore</span>
+            <img class="menu__thumb" src="./Navia/Navia.jpg" alt="Story">
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__link" href="#community" data-menu-action="gallery">
+            <small>03</small>community <span class="menu__sub">22-photo archive</span>
+            <img class="menu__thumb" src="./Navia/1346603.jpeg" alt="Community">
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__link" href="#billing" data-menu-action="studio">
+            <small>04</small>billing <span class="menu__sub">card studio &amp; png</span>
+            <img class="menu__thumb" src="./Navia/1344732.jpeg" alt="Card Studio">
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+        <li class="menu__item">
+          <a class="menu__link" href="#connect" data-menu-action="carousel">
+            <small>05</small>connect <span class="menu__sub">3d carousel ring</span>
+            <img class="menu__thumb" src="./Navia/Navia%20icon.jpg" alt="Connect">
+            <span class="arrow">&rarr;</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="menu__foot">
+        <a class="menu__cta" href="#begin" data-menu-action="studio">begin today <i>&rarr;</i></a>
+        <div class="menu__social">
+          <a href="#x" data-menu-action="dossier">x</a>
+          <a href="#discord" data-menu-action="salute">discord</a>
+          <a href="#github" data-menu-action="gallery">github</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- z-index 8: Top Nav -->
+    <header class="nav">
+      <nav class="nav__links">
+        <a href="#platform" data-nav-action="salute">platform</a>
+        <button class="toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle Fontaine Daylight / Poisson Midnight"></button>
+        <a href="#story" data-nav-action="dossier">story</a>
+        <a href="#community" class="hide-sm" data-nav-action="gallery">community</a>
+        <a href="#studio" class="hide-sm" data-nav-action="studio">card studio</a>
+      </nav>
+
+      <div class="brand" id="brandPill">
+        <div class="brand__logo">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="#1a1410" aria-hidden="true">
+            <circle cx="10" cy="10" r="4.2"></circle>
+            <g id="ray">
+              <path d="M10 0.6 L11.1 4.2 L8.9 4.2 Z"></path>
+            </g>
+            <use href="#ray" transform="rotate(30 10 10)"></use>
+            <use href="#ray" transform="rotate(60 10 10)"></use>
+            <use href="#ray" transform="rotate(90 10 10)"></use>
+            <use href="#ray" transform="rotate(120 10 10)"></use>
+            <use href="#ray" transform="rotate(150 10 10)"></use>
+            <use href="#ray" transform="rotate(180 10 10)"></use>
+            <use href="#ray" transform="rotate(210 10 10)"></use>
+            <use href="#ray" transform="rotate(240 10 10)"></use>
+            <use href="#ray" transform="rotate(270 10 10)"></use>
+            <use href="#ray" transform="rotate(300 10 10)"></use>
+            <use href="#ray" transform="rotate(330 10 10)"></use>
+          </svg>
+        </div>
+        <span class="brand__name">NAVIA</span>
+        <button class="brand__menu" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- z-index 9: Full 22-Photo Interactive Gallery Drawer -->
+    <section class="drawer-overlay" id="galleryDrawer" aria-label="Navia 22-Photo Royal Archive">
+      <div class="drawer-box">
+        <header class="drawer-head">
+          <div class="drawer-title">
+            Spina di Rosula Royal Archive
+            <span>22 Local Photos</span>
+          </div>
+          <div class="filter-tabs" id="galleryFilters">
+            <button class="filter-tab is-active" data-filter="all">All Photos (22)</button>
+            <button class="filter-tab" data-filter="wallpaper">4K Wallpapers (8)</button>
+            <button class="filter-tab" data-filter="portrait">Portraits &amp; TCG (4)</button>
+            <button class="filter-tab" data-filter="icon">Icons &amp; Expressions (10)</button>
+          </div>
+          <button class="drawer-close" id="closeGallery" aria-label="Close gallery">&times;</button>
+        </header>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </div>
+    </section>
+
+    <!-- z-index 9: Interactive 3D Card Studio & HD PNG Exporter -->
+    <section class="drawer-overlay" id="studioDrawer" aria-label="Navia 3D Card Studio & PNG Exporter">
+      <div class="drawer-box">
+        <header class="drawer-head">
+          <div class="drawer-title">
+            Sovereign Hologram Card Studio
+            <span>Custom Foil &amp; HD PNG Export</span>
+          </div>
+          <button class="drawer-close" id="closeStudio" aria-label="Close card studio">&times;</button>
+        </header>
+        <div class="studio-body">
+          <div class="studio-preview-wrap">
+            <canvas class="studio-canvas" id="studioPreviewCanvas" width="1024" height="1420"></canvas>
+          </div>
+          <div class="studio-controls">
+            <div class="studio-row">
+              <div class="studio-field">
+                <label for="studioTitleInput">Card Headline</label>
+                <input class="studio-input" id="studioTitleInput" type="text" value="N A V I A" maxlength="22">
+              </div>
+              <div class="studio-field">
+                <label for="studioSubInput">Royal Subtitle / Honorific</label>
+                <input class="studio-input" id="studioSubInput" type="text" value="DEMOISELLE OF SPINA DI ROSULA" maxlength="38">
+              </div>
+              <div class="studio-field">
+                <label for="studioBadgeInput">Emblem</label>
+                <input class="studio-input" id="studioBadgeInput" type="text" value="GEO" maxlength="7">
+              </div>
+            </div>
+
+            <div class="studio-field">
+              <label>Holographic Foil Shader &amp; Filigree Theme</label>
+              <div class="foil-options" id="foilOptions">
+                <button class="foil-chip is-active" data-foil="geo">
+                  <i style="background:#f7c654"></i> Radiant Geo Gold
+                </button>
+                <button class="foil-chip" data-foil="sapphire">
+                  <i style="background:#3b82f6"></i> Court Azure Sapphire
+                </button>
+                <button class="foil-chip" data-foil="crimson">
+                  <i style="background:#e11d48"></i> Rosula Crimson Rose
+                </button>
+                <button class="foil-chip" data-foil="prismatic">
+                  <i style="background:linear-gradient(135deg,#fde047,#a855f7)"></i> Sovereign Prismatic
+                </button>
+              </div>
+            </div>
+
+            <div class="studio-field">
+              <label>Choose Artwork from All 22 Local Navia Photos</label>
+              <div class="studio-photo-strip" id="studioPhotoStrip"></div>
+            </div>
+
+            <div class="studio-actions">
+              <button class="studio-cta" id="btnApplyTo3D">&#10022; Apply to Live 3D Stage</button>
+              <button class="studio-cta studio-cta--secondary" id="btnExportPng">&#8681; Download HD Card (.PNG)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- z-index 9: Character Chronicle, Arsenal & Voice Dossier Modal -->
+    <section class="drawer-overlay" id="dossierDrawer" aria-label="Navia Character Chronicle">
+      <div class="drawer-box">
+        <header class="drawer-head">
+          <div class="drawer-title">
+            Navia Caspar &mdash; Helm of the Radiant Rose
+            <span>Geo &bull; 5-Star Sovereign</span>
+          </div>
+          <button class="drawer-close" id="closeDossier" aria-label="Close chronicle">&times;</button>
+        </header>
+        <div class="dossier-body">
+          <div class="dossier-portrait">
+            <img src="./Navia/Navia.jpg" alt="President Navia Portrait">
+          </div>
+          <div class="dossier-info">
+            <div class="dossier-stats">
+              <div class="stat-box">
+                <small>Organization</small>
+                <strong>Spina di Rosula</strong>
+              </div>
+              <div class="stat-box">
+                <small>Vision &amp; Arkhe</small>
+                <strong>Geo &bull; Ousia</strong>
+              </div>
+              <div class="stat-box">
+                <small>Signature Armament</small>
+                <strong>Verdict &amp; Gunbrella</strong>
+              </div>
+              <div class="stat-box">
+                <small>Constellation</small>
+                <strong>Rosa Multiflora</strong>
+              </div>
+            </div>
+
+            <div class="arsenal-grid">
+              <div class="arsenal-card">
+                <h4>&#9876; Verdict (5-Star Broadaxe)</h4>
+                <p>Forged with crystalline sapphires and golden filigree; harnesses Elemental Shards to amplify Ceremonial Crystal Shot damage.</p>
+              </div>
+              <div class="arsenal-card">
+                <h4>&#9730; Rosula Gunbrella</h4>
+                <p>An elegant Fontaine parasol concealing a multi-barrel Geo shard-cannon capable of firing up to 11 Rosula Shardshots in a single volley.</p>
+              </div>
+              <div class="arsenal-card">
+                <h4>&#10022; Golden Rose Cannon</h4>
+                <p>Calls down an artillery bombardment that salutes the battlefield while continuously generating Crystallize shards for the Spina.</p>
+              </div>
+            </div>
+
+            <div class="voice-list">
+              <div class="voice-card" data-voice="0">
+                <h4>&#9835; Elemental Skill &mdash; Ceremonial Crystal Shot</h4>
+                <p>&ldquo;A proper lady always carries her parasol... even if mine happens to fire Rosula Shardshots at point-blank range! Fire!&rdquo;</p>
+              </div>
+              <div class="voice-card" data-voice="1">
+                <h4>&#9835; Elemental Burst &mdash; As the Sunlit Sky's Singing Salute</h4>
+                <p>&ldquo;On behalf of the Spina di Rosula — let the Golden Rose Cannon sound our salute across the skies of Fontaine!&rdquo;</p>
+              </div>
+              <div class="voice-card" data-voice="2">
+                <h4>&#9835; Afternoon Tea &amp; Macarons</h4>
+                <p>&ldquo;Work flows so much smoother when everyone has a freshly baked macaron in hand. Melus and Silver already prepared the tea!&rdquo;</p>
+              </div>
+              <div class="voice-card" data-voice="3">
+                <h4>&#9835; Self-Driving Workflows of Poisson</h4>
+                <p>&ldquo;No matter how tangled a case in the Court of Fontaine seems, the Spina resolves it before sunset — streamlined and breezy.&rdquo;</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- z-index 11: Fullscreen Photo Lightbox -->
+    <div class="lightbox" id="lightbox">
+      <img class="lightbox__img" id="lightboxImg" src="./Navia/1351553.jpeg" alt="Navia Fullscreen Preview">
+      <div class="lightbox__bar">
+        <button class="hud-btn hud-btn--gold" id="lbSetBg">Set as Hero Background</button>
+        <button class="hud-btn" id="lbSetCard">Apply to 3D Hologram Card</button>
+        <button class="hud-btn" id="lbClose">Close Preview &times;</button>
+      </div>
+    </div>
+
+    <!-- z-index 12: Notification Toast -->
+    <div class="toast" id="toast">Crystal Salute Activated</div>
+  </main>
+
+  <!-- Modular JavaScript Application -->
+  <script src="./js/textures-cache.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
